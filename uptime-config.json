@@ -1,0 +1,33 @@
+{
+  "monitoring_services": {
+    "uptimerobot": {
+      "description": "Configuración para UptimeRobot",
+      "urls": [
+        "https://tu-app.onrender.com/health",
+        "https://tu-app.onrender.com/"
+      ],
+      "check_interval": 300,
+      "timeout": 30
+    },
+    "cron_job": {
+      "description": "Comando para cron job local",
+      "command": "python monitor.py https://tu-app.onrender.com",
+      "schedule": "*/5 * * * *"
+    },
+    "github_actions": {
+      "description": "Workflow de GitHub Actions para monitoreo",
+      "file": ".github/workflows/monitor.yml"
+    }
+  },
+  "health_check_endpoints": [
+    "/health",
+    "/",
+    "/dashboard"
+  ],
+  "keep_alive_settings": {
+    "enabled": true,
+    "interval_seconds": 300,
+    "timeout_seconds": 15,
+    "max_retries": 5
+  }
+} 

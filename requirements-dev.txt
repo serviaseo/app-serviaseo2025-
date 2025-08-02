@@ -1,0 +1,24 @@
+# Dependencias principales
+Flask==2.3.3
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.0.5
+Werkzeug==2.3.7
+
+# Dependencias de datos
+pandas==2.0.3
+numpy==1.24.3
+openpyxl==3.1.2
+
+# Dependencias de documentos
+reportlab==4.0.4
+python-docx==0.8.11
+
+# Dependencias de red
+requests==2.31.0
+
+# Servidor WSGI
+gunicorn==21.2.0
+
+# Herramientas de construcción
+setuptools==68.2.2
+wheel==0.41.2 
