@@ -1,0 +1,2624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Control de Aseo</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestana.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .header-container {
+            background: linear-gradient(135deg, #0f2167 0%, #1a3891 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        .header-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.2) 0%,
+                rgba(255,255,255,0.4) 50%,
+                rgba(255,255,255,0.2) 100%
+            );
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(15, 33, 103, 0.95) 0%, rgba(26, 56, 145, 0.95) 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .header-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin: 0;
+        }
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+            margin-top: 1rem;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .modern-separator {
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.7) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            margin: 1rem auto 0.5rem;
+            position: relative;
+        }
+        .modern-separator::before,
+        .modern-separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            transform: translateY(-50%);
+        }
+        .modern-separator::before {
+            left: calc(50% - 50px);
+        }
+        .modern-separator::after {
+            right: calc(50% - 50px);
+        }
+        .header-subtitle {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+        }
+        .content-section {
+            padding: 0 2rem;
+            margin-bottom: 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .footer-separator {
+            position: relative;
+            height: 4px;
+            width: 100%;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-separator::before {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #3b82f6 20%,
+                #60a5fa 30%,
+                #ffffff 50%,
+                #60a5fa 70%,
+                #3b82f6 80%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        .footer-separator::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle,
+                rgba(59, 130, 246, 0.8) 0%,
+                rgba(59, 130, 246, 0.4) 50%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        .footer-separator-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+        .footer-separator-dot.left {
+            left: 25%;
+        }
+        .footer-separator-dot.right {
+            right: 25%;
+        }
+        .footer-separator-line {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1px;
+            width: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 75%,
+                transparent 100%
+            );
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .footer-section:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-title i {
+            font-size: 1.3rem;
+            color: #2563eb;
+        }
+        .footer-text {
+            color: #334155;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+            font-size: 0.95rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .footer-contact:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(5px);
+        }
+        .footer-contact i {
+            color: #2563eb;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+        .footer-contact:hover i {
+            transform: scale(1.1);
+            color: #1e3a8a;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-credits {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+        .credits-section {
+            flex: 1;
+            max-width: 400px;
+        }
+        .footer-company {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .footer-developer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .developer-company {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+        .developer-name {
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+        }
+        .developer-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: rotateBorder 4s linear infinite;
+        }
+        .developer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .developer-logo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
+            z-index: -1;
+            animation: spin 3s linear infinite;
+        }
+        .developer-logo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 3s linear infinite;
+        }
+        .developer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .user-float-panel {
+            position: fixed;
+            bottom: 30px;
+            right: 12px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.98) 100%
+            );
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.05),
+                0 4px 15px rgba(37, 99, 235, 0.08);
+            z-index: 1000;
+            width: 180px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .user-float-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.08),
+                0 6px 20px rgba(37, 99, 235, 0.1);
+        }
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+        }
+        .user-name {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+        .time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 2px;
+        }
+        .time-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #334155;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .time-item:hover {
+            background: rgba(241, 245, 249, 0.8);
+            transform: translateX(2px);
+        }
+        .time-item i {
+            width: 14px;
+            color: #3b82f6;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        .time-item span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .time-separator {
+            width: 100%;
+            height: 1px;
+            background: rgba(203, 213, 225, 0.3);
+            margin: 2px 0;
+        }
+        @media (max-width: 768px) {
+            .user-float-panel {
+                bottom: 15px;
+                right: 15px;
+                width: 160px;
+            }
+            .time-item {
+                padding: 2px 4px;
+            }
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .stat-card {
+            background: linear-gradient(45deg, #3b82f6, #9333ea);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card.users {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        .stat-card.planillas {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+        }
+        .stat-card.tasks {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+        .stat-card.completed {
+            background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+        }
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card p {
+            margin: 0;
+            opacity: 0.8;
+        }
+        .admin-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .admin-section h4 {
+            color: #374151;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .admin-section h4 i {
+            margin-right: 10px;
+            color: #6b7280;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            border: none;
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(217, 119, 6, 0.3);
+        }
+        .time-remaining {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .badge.bg-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            color: white;
+            font-weight: 500;
+        }
+        .table th {
+            background: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+        }
+        .table td {
+            vertical-align: middle;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .form-control:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        }
+        .form-select:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        }
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-weight: 500;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .alert-danger {
+            background: linear-gradient(45deg, #fef2f2, #fee2e2);
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+        .alert-success {
+            background: linear-gradient(45deg, #f0fdf4, #dcfce7);
+            color: #16a34a;
+            border-left: 4px solid #16a34a;
+        }
+        .alert-info {
+            background: linear-gradient(45deg, #eff6ff, #dbeafe);
+            color: #2563eb;
+            border-left: 4px solid #2563eb;
+        }
+        .alert i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .btn-close {
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .btn-close:hover {
+            opacity: 1;
+        }
+        .credits-divider {
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(255, 255, 255, 0.7) 20%,
+                rgba(59, 130, 246, 0.8) 50%,
+                rgba(255, 255, 255, 0.7) 80%,
+                transparent
+            );
+            position: relative;
+            margin: 0 1rem;
+        }
+        .credits-divider::before,
+        .credits-divider::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #60a5fa;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+        }
+        .credits-divider::before {
+            top: 10px;
+        }
+        .credits-divider::after {
+            bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+        @keyframes rotateBorder {
+            0% { border-color: rgba(255, 255, 255, 0.2);}
+            50% { border-color: rgba(96, 165, 250, 0.5);}
+            100% { border-color: rgba(255, 255, 255, 0.2);}
+        }
+
+        /* Estilos para alertas emergentes flotantes */
+        .floating-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 400px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+            border: none;
+            transform: translateX(100%);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backdrop-filter: blur(10px);
+            display: none; /* Inicialmente oculta */
+        }
+
+        .floating-alert.show {
+            transform: translateX(0);
+        }
+
+        .floating-alert.hide {
+            transform: translateX(100%);
+        }
+
+        .floating-alert-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .floating-alert-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .floating-alert-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-alert-close:hover {
+            opacity: 1;
+        }
+
+        .floating-alert-message {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            opacity: 0.95;
+        }
+
+        .floating-alert-icon {
+            font-size: 1.3rem;
+        }
+
+        .btn-group .btn {
+            margin: 0 2px;
+            border-radius: 6px !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline-info {
+            color: #0dcaf0;
+            border-color: #0dcaf0;
+        }
+
+        .btn-outline-info:hover {
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+            color: white;
+        }
+
+        .btn-outline-primary {
+            color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+        .btn-outline-danger {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+
+        .qr-code-wrapper {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            border-radius: 15px 15px 0 0;
+            border: none;
+        }
+
+        .modal-footer {
+            border-radius: 0 0 15px 15px;
+            border: none;
+        }
+
+        /* Agregar estilos CSS para las animaciones */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Estilos para la sección de enlaces */
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+            padding: 12px 20px;
+            font-weight: 500;
+            color: #6b7280;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #0f2167 0%, #1a3891 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(15, 33, 103, 0.3);
+        }
+
+        .link-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .link-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .link-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .link-card-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .link-card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .link-card-icon.salud {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .link-card-icon.laboratorio {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .link-input-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .link-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .link-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .link-input.valid {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .link-input.invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .link-status {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .link-status.valid {
+            color: #10b981;
+        }
+
+        .link-status.invalid {
+            color: #ef4444;
+        }
+
+        .link-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-test-link {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-test-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            color: white;
+        }
+
+        .btn-clear-link {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+            color: white;
+        }
+
+        .year-selector-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e5e7eb 100%);
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .year-selector-container label {
+            font-weight: 600;
+            color: #374151;
+            margin: 0;
+        }
+
+        .year-selector-container select {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 4px 8px;
+            background: white;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .save-all-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .save-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+            color: white;
+        }
+
+        .save-all-btn:active {
+            transform: translateY(0);
+        }
+
+        .progress-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .progress-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-content">
+            <div class="header-title-wrapper">
+                <h1 class="header-title">Panel de Administración</h1>
+            </div>
+            <div class="modern-separator"></div>
+            <h2 class="company-name">Grupo Servis Aseo S.L</h2>
+        </div>
+    </div>
+
+    <section class="content-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-cogs"></i> Panel de Administración</h2>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión Admin
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Sistema de alertas flotantes -->
+        <div id="floatingAlertsContainer"></div>
+
+        <!-- Estadísticas del Sistema -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card users">
+                    <i class="fas fa-users"></i>
+                    <h3>{{ total_users }}</h3>
+                    <p>Usuarios Registrados</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card planillas">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>{{ total_planillas }}</h3>
+                    <p>Planillas Creadas</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card tasks">
+                    <i class="fas fa-tasks"></i>
+                    <h3>{{ total_tasks }}</h3>
+                    <p>Tareas Totales</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card completed">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>{{ completed_tasks }}</h3>
+                    <p>Tareas Completadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestión de Usuarios -->
+        <div class="admin-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-users"></i> Gestión de Usuarios</h4>
+                <a href="{{ url_for('create_user') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Crear Usuario
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Fecha de Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-circle me-2" style="font-size: 1.5rem; color: #6b7280;"></i>
+                                    {{ user.username }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge {% if user.role == 'admin' %}admin{% else %}user{% endif %}">
+                                    {{ user.role }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-primary btn-action">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-warning btn-action">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary">Ver Todos los Usuarios</a>
+            </div>
+        </div>
+
+        <!-- Gestión de Usuarios Temporales -->
+        <div class="admin-section">
+            <h4><i class="fas fa-clock"></i> Usuarios Temporales</h4>
+            
+            <!-- Formulario para crear usuarios temporales -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Crear Usuario Temporal</h5>
+                </div>
+                <div class="card-body">
+                    <form id="temporaryUserForm">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="tempUsername" class="form-label">Nombre de Usuario</label>
+                                    <input type="text" class="form-control" id="tempUsername" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="tempPassword" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="tempPassword" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="tempDuration" class="form-label">Duración</label>
+                                    <select class="form-control" id="tempDuration" required>
+                                        <option value="">Seleccionar duración</option>
+                                        <option value="4">4 minutos</option>
+                                        <option value="15">15 minutos</option>
+                                        <option value="30">30 minutos</option>
+                                        <option value="60">1 hora</option>
+                                        <option value="480">8 horas</option>
+                                        <option value="1440">24 horas</option>
+                                        <option value="43200">30 días</option>
+                                        <option value="520320">362 días</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-clock me-2"></i>Crear Usuario Temporal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla de usuarios temporales activos -->
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Expira</th>
+                            <th>Tiempo Restante</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="temporaryUsersTable">
+                        {% for user in active_temporary_users %}
+                        <tr id="user-row-{{ user.id }}" data-user-id="{{ user.id }}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock me-2" style="font-size: 1.2rem; color: #f59e0b;"></i>
+                                    {{ user.username }}
+                                </div>
+                            </td>
+                            <td>{{ user.expires_at.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                            <td>
+                                <span class="time-remaining" data-expires="{{ user.expires_at.isoformat() }}">
+                                    Calculando...
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">Activo</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-info" 
+                                            onclick="copyUserData('user-row-{{ user.id }}', '{{ user.username }}')" 
+                                            title="Copiar datos">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            onclick="showQRCode({{ user.id }}, '{{ user.username }}')" 
+                                            title="Ver QR">
+                                        <i class="fas fa-qrcode"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            onclick="deleteTemporaryUser({{ user.id }}, '{{ user.username }}')" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if not active_temporary_users %}
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-clock fa-3x mb-3" style="color: #e5e7eb;"></i>
+                <p>No hay usuarios temporales activos</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Actualización de Enlaces 2026 -->
+        <div class="admin-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-link"></i> Actualización de Enlaces <span id="sectionYear">{{ year_2026 }}</span></h4>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="form-group mb-0">
+                        <label for="yearSelector" class="form-label me-2">Año:</label>
+                        <select class="form-control form-control-sm" id="yearSelector" style="width: auto;">
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success save-all-btn" onclick="saveAllLinks()">
+                        <i class="fas fa-save"></i> Guardar Todos los Enlaces
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tabs para Salud Casanare y Laboratorio -->
+            <ul class="nav nav-tabs mb-4" id="linksTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="salud-tab" data-bs-toggle="tab" data-bs-target="#salud" type="button" role="tab">
+                        <i class="fas fa-hospital me-2"></i>Salud Casanare
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="laboratorio-tab" data-bs-toggle="tab" data-bs-target="#laboratorio" type="button" role="tab">
+                        <i class="fas fa-flask me-2"></i>Laboratorio
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="linksTabsContent">
+                <!-- Tab Salud Casanare -->
+                <div class="tab-pane fade show active" id="salud" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-hospital me-2"></i>Enlaces de Salud Casanare - <span id="saludYear">{{ year_2026 }}</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="saludLinksContainer">
+                                <!-- Los enlaces se generarán dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Laboratorio -->
+                <div class="tab-pane fade" id="laboratorio" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-flask me-2"></i>Enlaces de Laboratorio - <span id="labYear">{{ year_2026 }}</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="labLinksContainer">
+                                <!-- Los enlaces se generarán dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control de Disponibilidad 2025 -->
+        <div class="admin-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-toggle-on"></i> Control de Disponibilidad 2025</h4>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="toggle2025" style="transform: scale(1.2);">
+                        <label class="form-check-label fw-bold" for="toggle2025">
+                            <span id="toggleStatus">Activar</span> Sección 2025
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-warning" onclick="update2025Status()">
+                        <i class="fas fa-save"></i> Guardar Estado
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Configuración de Disponibilidad</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>Estado Actual:</h6>
+                                <p class="mb-2">La sección de planillas 2025 está <strong id="currentStatus">disponible</strong> para los usuarios.</p>
+                                <small class="text-muted">Cuando se desactive, los usuarios verán un mensaje de "No disponible" en lugar de las planillas de 2025.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-warning">
+                                <h6><i class="fas fa-clock me-2"></i>Mensaje de No Disponibilidad:</h6>
+                                <div class="form-group">
+                                    <textarea class="form-control" id="unavailableMessage" rows="3" placeholder="Mensaje que verán los usuarios cuando la sección esté desactivada...">Sección temporalmente no disponible. Posible actualización de plataforma en curso. Por favor, contacte al administrador para más información.</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-eye me-2"></i>Vista Previa del Mensaje:</h6>
+                                    <div class="alert alert-secondary" id="messagePreview">
+                                        <i class="fas fa-tools me-2"></i>
+                                        <strong>Sección temporalmente no disponible.</strong><br>
+                                        Posible actualización de plataforma en curso. Por favor, contacte al administrador para más información.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planillas Recientes -->
+        <div class="admin-section">
+            <h4><i class="fas fa-file-alt"></i> Planillas Recientes</h4>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Mes</th>
+                            <th>Año</th>
+                            <th>Fecha de Creación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for planilla in recent_planillas %}
+                        <tr>
+                            <td>{{ planilla.titulo }}</td>
+                            <td>{{ planilla.mes }}</td>
+                            <td>{{ planilla.año }}</td>
+                            <td>{{ planilla.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tareas Recientes -->
+        <div class="admin-section">
+            <h4><i class="fas fa-tasks"></i> Tareas Recientes</h4>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Asignado a</th>
+                            <th>Fecha de Creación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in all_tasks %}
+                        <tr>
+                            <td>{{ task.title }}</td>
+                            <td>
+                                <span class="badge {% if task.status == 'completed' %}bg-success{% elif task.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td>{{ task.assigned_to or 'No asignado' }}</td>
+                            <td>{{ task.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección para editar mensaje de publicidad/actualización -->
+        <div class="admin-section mt-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header" style="background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%); color: #fff; border-top-left-radius: 1rem; border-top-right-radius: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-bullhorn"></i>
+                    <span style="font-weight:600; font-size:1.15rem;">Mensaje de Publicidad / Actualización</span>
+                </div>
+                <div class="card-body" style="background: #fff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <form id="importantMsgForm">
+                        <div class="mb-3">
+                            <label for="importantMsgContent" class="form-label" style="font-weight:500;">Mensaje a mostrar en el dashboard</label>
+                            <textarea class="form-control" id="importantMsgContent" name="content" rows="3" placeholder="Ejemplo: Actualización de plataforma el día 10/07/2024" required style="border-radius: 0.7rem; font-size:1.05rem;">{{ important_msg.content if important_msg else '' }}</textarea>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="importantMsgActive" name="is_active" value="1" {% if important_msg and important_msg.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="importantMsgActive">
+                                Mostrar mensaje en el dashboard
+                            </label>
+                        </div>
+                        <button type="submit" class="btn" style="background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%); color: #fff; font-weight:600; border-radius:0.7rem;">
+                            <i class="fas fa-save me-1"></i> Guardar Mensaje
+                        </button>
+                        <span id="importantMsgStatus" class="ms-3"></span>
+                    </form>
+                    <hr class="my-4">
+                    <div>
+                        <div class="mb-2" style="font-weight:500; color:#374151;"><i class="fas fa-eye me-1"></i> Vista Previa del Mensaje:</div>
+                        <div id="importantMsgPreview" style="background:#f0f9ff; border-radius:0.7rem; padding:1.1rem 1.2rem; box-shadow:0 2px 8px rgba(37,99,235,0.07); color:#2563eb; font-size:1.08rem; font-weight:500; display:{{ (important_msg and important_msg.is_active and important_msg.content.strip())|default('none', true) }};">
+                            <i class="fas fa-bullhorn me-2"></i><span id="importantMsgPreviewText">{{ important_msg.content if important_msg and important_msg.is_active else '' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de confirmación para eliminar usuario temporal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title" id="deleteUserModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-times text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 class="text-center mb-3">¿Estás seguro de que quieres eliminar al usuario temporal?</h6>
+                    <p class="text-center text-muted mb-0">
+                        <strong id="deleteUserName"></strong>
+                    </p>
+                    <p class="text-center text-muted small mt-2">
+                        Esta acción no se puede deshacer y el usuario perderá acceso inmediatamente.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>Eliminar Usuario
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar QR code -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title" id="qrModalLabel">
+                        <i class="fas fa-qrcode me-2"></i>
+                        Código QR de Acceso
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-3">
+                        <h6 id="qrUsername" class="text-primary mb-2"></h6>
+                        <p id="qrExpires" class="text-muted small mb-3"></p>
+                        <div id="qrCodeContainer" class="d-flex justify-content-center"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-outline-primary me-2" onclick="downloadQR()">
+                        <i class="fas fa-download me-2"></i>Descargar QR
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary me-2" onclick="copyQRData()">
+                        <i class="fas fa-copy me-2"></i>Copiar Enlace
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-separator">
+            <div class="footer-separator-line"></div>
+            <div class="footer-separator-dot left"></div>
+            <div class="footer-separator-dot right"></div>
+        </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-building"></i>
+                    Sobre Nosotros
+                </h3>
+                <p class="footer-text">Grupo Servis Aseo S.L, líderes en servicios profesionales de limpieza y mantenimiento. Comprometidos con la excelencia y la calidad en cada servicio.</p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-address-card"></i>
+                    Contacto
+                </h3>
+                <div class="footer-contact">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 305 201 2373</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>componentescpu@gmail.com</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Casanare, Colombia</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-star"></i>
+                    Servicios Especializados
+                </h3>
+                <p class="footer-text">• Limpieza Hospitalaria Avanzada</p>
+                <p class="footer-text">• Mantenimiento de Laboratorios</p>
+                <p class="footer-text">• Control de Calidad Profesional</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                <div class="credits-section">
+                    <p class="footer-company">© 2025 Grupo Servis Aseo S.L - Innovación en Servicios de Limpieza</p>
+                </div>
+                <div class="credits-divider"></div>
+                <div class="credits-section">
+                    <div class="footer-developer">
+                        <div class="developer-header">
+                            <div class="developer-logo">
+                                <img src="{{ url_for('static', filename='images/jl-digital-logo.jpg') }}" alt="JL Digital Logo">
+                            </div>
+                            <p class="developer-company">Sistema desarrollado por JLDIGITAL S.A</p>
+                        </div>
+                        <p class="developer-name">Ing. Julio César Martínez - Desarrollador Profesional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="user-float-panel">
+        <div class="user-info-header">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <p class="user-name">{{ current_user.username }}</p>
+        </div>
+        <div class="time-info">
+            <div class="time-item">
+                <i class="fas fa-clock"></i>
+                <span id="current-time">--:--:--</span>
+            </div>
+            <div class="time-separator"></div>
+            <div class="time-item">
+                <i class="fas fa-calendar"></i>
+                <span id="current-date">--/--/----</span>
+            </div>
+            <div class="time-item">
+                <i class="fas fa-calendar-day"></i>
+                <span id="current-month-year">---- ----</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerta emergente flotante -->
+    <div id="floatingAlert" class="floating-alert">
+        <div class="floating-alert-header">
+            <div class="floating-alert-title">
+                <i class="fas fa-exclamation-triangle floating-alert-icon"></i>
+                Acceso Denegado
+            </div>
+            <button class="floating-alert-close" onclick="closeFloatingAlert()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="floating-alert-message" id="floatingAlertMessage">
+            Solo los administradores pueden acceder a esta sección.
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            // Actualizar hora
+            const timeString = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+            // Actualizar fecha
+            const dateString = now.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateString;
+            // Actualizar mes y año
+            const monthYearString = now.toLocaleDateString('es-ES', {
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('current-month-year').textContent = 
+                monthYearString.charAt(0).toUpperCase() + monthYearString.slice(1);
+        }
+        // Actualizar inmediatamente y luego cada segundo
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Variables globales para el modal de eliminación
+        let userToDelete = null;
+        let usernameToDelete = '';
+
+        // Función para mostrar el modal de confirmación de eliminación
+        function showDeleteConfirmation(userId, username) {
+            userToDelete = userId;
+            usernameToDelete = username;
+            
+            // Actualizar el contenido del modal
+            document.getElementById('deleteUserName').textContent = username;
+            
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+            modal.show();
+        }
+
+        // Función para confirmar la eliminación
+        function confirmDelete() {
+            if (userToDelete && usernameToDelete) {
+                fetch(`/admin/delete_temporary_user/${userToDelete}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showFloatingAlert(data.message);
+                        // Cerrar el modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+                        modal.hide();
+                        // Recargar página para actualizar la tabla
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        showFloatingAlert(data.error || 'Error al eliminar usuario');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showFloatingAlert('Error al eliminar usuario temporal');
+                });
+            }
+        }
+
+        // Configurar el botón de confirmación cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+        });
+
+        // Función para mostrar alertas flotantes
+        function showFloatingAlert(message, type = 'info') {
+            // Crear el elemento de alerta
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 350px;
+                max-width: 500px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                border: none;
+                border-radius: 8px;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            
+            // Definir iconos según el tipo
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            else if (type === 'danger') icon = 'exclamation-triangle';
+            else if (type === 'warning') icon = 'exclamation-circle';
+            
+            alertDiv.innerHTML = `
+                <i class="fas fa-${icon} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Agregar al contenedor de alertas
+            const container = document.getElementById('floatingAlertsContainer');
+            if (container) {
+                container.appendChild(alertDiv);
+            } else {
+                document.body.appendChild(alertDiv);
+            }
+            
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.style.animation = 'slideOutRight 0.3s ease-in';
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Función para copiar datos del usuario
+        function copyUserData(rowId, username) {
+            const row = document.getElementById(rowId);
+            const userId = row.dataset.userId;
+
+            // Pedir al backend la URL de login con el token
+            fetch(`/admin/get_temporary_user_qr/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.qr_data) {
+                        const loginUrl = data.qr_data;
+                        const dataText = `**Enlace de Acceso Directo y Temporal**\n\n` +
+                                       `**Para:** ${username}\n` +
+                                       `**Enlace:** ${loginUrl}\n\n` +
+                                       `Nota: Este enlace es de un solo uso y expira.`;
+
+                        navigator.clipboard.writeText(dataText).then(() => {
+                            showFloatingAlert('Enlace de acceso copiado al portapapeles.', 'success');
+                        }).catch(err => {
+                            console.error('Error al copiar:', err);
+                            showFloatingAlert('Error al copiar el enlace.', 'danger');
+                        });
+                    } else {
+                        showFloatingAlert(data.error || 'No se pudo obtener el enlace de acceso.', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching login URL:', error);
+                    showFloatingAlert('Error de red al obtener el enlace.', 'danger');
+                });
+        }
+
+        // Función para mostrar QR code
+        function showQRCode(userId, username) {
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+            modal.show();
+            
+            // Actualizar información del modal
+            document.getElementById('qrUsername').textContent = `Usuario: ${username}`;
+            
+            // Obtener datos del usuario para QR
+            fetch(`/admin/get_temporary_user_qr/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Generar QR code usando una librería externa
+                        generateQRCode(data.qr_data, username);
+                        document.getElementById('qrExpires').textContent = 
+                            `Expira: ${new Date(data.qr_data.expires_at).toLocaleString('es-ES')}`;
+                    } else {
+                        document.getElementById('qrCodeContainer').innerHTML = 
+                            '<div class="alert alert-danger">Error al generar QR</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('qrCodeContainer').innerHTML = 
+                        '<div class="alert alert-danger">Error al generar QR</div>';
+                });
+        }
+
+        let currentQRUsername = '';
+        let currentQRLoginUrl = '';
+
+        function generateQRCode(loginUrl, username) {
+            const container = document.getElementById('qrCodeContainer');
+            container.innerHTML = ''; // Limpiar contenedor
+            
+            new QRCode(container, {
+                text: loginUrl,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            currentQRLoginUrl = loginUrl;
+            currentQRUsername = username;
+        }
+
+        function downloadQR() {
+            const qrCanvas = document.querySelector('#qrCodeContainer canvas');
+            if (qrCanvas) {
+                const link = document.createElement('a');
+                link.download = `qr-usuario-${currentQRUsername}.png`;
+                link.href = qrCanvas.toDataURL('image/png');
+                link.click();
+            } else {
+                showFloatingAlert('No se ha generado un código QR para descargar.', 'warning');
+            }
+        }
+        
+        function copyQRData() {
+            if (currentQRLoginUrl) {
+                const dataText = `**Enlace de Acceso Directo para ${currentQRUsername}**\n\n${currentQRLoginUrl}`;
+
+                navigator.clipboard.writeText(dataText).then(() => {
+                    showFloatingAlert('Enlace de acceso del QR copiado.', 'success');
+                }).catch(err => {
+                    console.error('Error al copiar datos del QR:', err);
+                    showFloatingAlert('Error al copiar el enlace del QR.', 'danger');
+                });
+            } else {
+                showFloatingAlert('No hay un enlace de QR para copiar.', 'warning');
+            }
+        }
+
+        // Función para eliminar usuario temporal (ahora usa el modal)
+        function deleteTemporaryUser(userId, username) {
+            showDeleteConfirmation(userId, username);
+        }
+
+        // Interceptar enlaces del admin para verificar acceso
+        document.addEventListener('DOMContentLoaded', function() {
+            // Convertir mensajes flash a alertas flotantes
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        showFloatingAlert('{{ message }}', '{{ "danger" if category == "error" else "success" if category == "success" else "warning" if category == "warning" else "info" }}');
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            const adminLinks = document.querySelectorAll('a[href*="admin"]');
+            
+            adminLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Hacer petición AJAX para verificar acceso
+                    fetch(this.href)
+                        .then(response => {
+                            if (response.status === 403) {
+                                return response.json();
+                            }
+                            // Si no hay error, redirigir normalmente
+                            window.location.href = this.href;
+                        })
+                        .then(data => {
+                            if (data && data.error) {
+                                showFloatingAlert(data.error, 'danger');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // En caso de error, intentar redirigir normalmente
+                            window.location.href = this.href;
+                        });
+                });
+            });
+
+            // Manejar formulario de usuarios temporales
+            const tempUserForm = document.getElementById('temporaryUserForm');
+            if (tempUserForm) {
+                tempUserForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const username = document.getElementById('tempUsername').value;
+                    const password = document.getElementById('tempPassword').value;
+                    const duration = document.getElementById('tempDuration').value;
+                    
+                    if (!username || !password || !duration) {
+                        showFloatingAlert('Por favor completa todos los campos', 'warning');
+                        return;
+                    }
+                    
+                    // Crear usuario temporal
+                    fetch('/admin/create_temporary_user', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password,
+                            duration: duration
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showFloatingAlert(data.message, 'success');
+                            // Limpiar formulario
+                            tempUserForm.reset();
+                            // Recargar página para actualizar la tabla
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            showFloatingAlert(data.error || 'Error al crear usuario temporal', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showFloatingAlert('Error al crear usuario temporal', 'danger');
+                    });
+                });
+            }
+
+            // Actualizar tiempo restante cada segundo
+            function updateTimeRemaining() {
+                const timeElements = document.querySelectorAll('.time-remaining');
+                timeElements.forEach(element => {
+                    // Python's isoformat() en un datetime naive no agrega 'Z'.
+                    // Lo agregamos para asegurar que JavaScript lo interprete como una fecha UTC.
+                    const isoString = element.dataset.expires + 'Z';
+                    const expiresAt = new Date(isoString);
+                    
+                    // new Date() obtiene la hora actual. Su valor interno está en ms desde la época (UTC).
+                    const now = new Date();
+
+                    // La resta de dos objetos Date da como resultado la diferencia en milisegundos (UTC vs UTC).
+                    const diff = expiresAt - now;
+                    
+                    if (diff <= 0) {
+                        element.textContent = 'Expirado';
+                        element.style.color = '#dc2626';
+                        element.style.fontWeight = 'bold';
+                        // Opcional: recargar la página para que el backend elimine al usuario de la lista
+                        setTimeout(() => {
+                            // Evitar recargas constantes si el elemento ya no está en la página
+                            if (document.body.contains(element)) {
+                                location.reload();
+                            }
+                        }, 2000);
+                    } else {
+                        const hours = Math.floor(diff / (1000 * 60 * 60));
+                        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                        
+                        let timeString = '';
+                        if (hours > 0) {
+                            timeString += `${hours}h `;
+                        }
+                        if (minutes > 0 || hours > 0) {
+                            timeString += `${minutes}m `;
+                        }
+                        timeString += `${seconds}s`;
+                        
+                        element.textContent = timeString.trim();
+                        
+                        // Cambiar color según tiempo restante
+                        if (diff < 5 * 60 * 1000) { // Menos de 5 minutos
+                            element.style.color = '#dc2626';
+                            element.style.fontWeight = 'bold';
+                        } else if (diff < 15 * 60 * 1000) { // Menos de 15 minutos
+                            element.style.color = '#f59e0b';
+                            element.style.fontWeight = 'bold';
+                        } else {
+                            element.style.color = '#059669';
+                        }
+                    }
+                });
+            }
+
+            // Actualizar tiempo restante inmediatamente y cada segundo
+            updateTimeRemaining();
+            setInterval(updateTimeRemaining, 1000);
+
+            // Inicializar la sección de enlaces
+            initializeLinksSection();
+        });
+
+        // Funcionalidad para la sección de enlaces
+        let currentYear = {{ year_2026 }};
+        let linksData = {
+            salud: {},
+            laboratorio: {}
+        };
+
+        // Inicializar el selector de año con el año actual
+        function initializeYearSelector() {
+            const yearSelector = document.getElementById('yearSelector');
+            if (yearSelector) {
+                // Establecer el valor seleccionado al año actual
+                yearSelector.value = currentYear;
+            }
+        }
+
+        function initializeLinksSection() {
+            // Inicializar el selector de año
+            initializeYearSelector();
+            
+            // Cargar enlaces existentes
+            loadExistingLinks();
+            
+            // Generar formularios de enlaces
+            generateLinkForms();
+            
+            // Configurar eventos
+            setupLinkEvents();
+        }
+
+        function loadExistingLinks() {
+            // Cargar enlaces existentes desde el backend
+            fetch(`/admin/get_links/${currentYear}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        linksData = data.links;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cargando enlaces:', error);
+                });
+        }
+
+        function generateLinkForms() {
+            const meses = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            ];
+
+            // Generar formularios para Salud Casanare
+            const saludContainer = document.getElementById('saludLinksContainer');
+            saludContainer.innerHTML = '';
+            
+            meses.forEach((mes, index) => {
+                const mesNum = index + 1;
+                const card = createLinkCard('salud', mesNum, mes);
+                saludContainer.appendChild(card);
+            });
+
+            // Generar formularios para Laboratorio
+            const labContainer = document.getElementById('labLinksContainer');
+            labContainer.innerHTML = '';
+            
+            meses.forEach((mes, index) => {
+                const mesNum = index + 1;
+                const card = createLinkCard('laboratorio', mesNum, mes);
+                labContainer.appendChild(card);
+            });
+        }
+
+        function createLinkCard(type, mesNum, mesNombre) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4';
+            
+            const existingLink = linksData[type] && linksData[type][mesNum] ? linksData[type][mesNum] : '';
+            
+            col.innerHTML = `
+                <div class="link-card">
+                    <div class="link-card-header">
+                        <h6 class="link-card-title">
+                            <div class="link-card-icon ${type}">
+                                <i class="fas ${type === 'salud' ? 'fa-hospital' : 'fa-flask'}"></i>
+                            </div>
+                            ${mesNombre}
+                        </h6>
+                    </div>
+                    <div class="link-input-group">
+                        <input type="url" 
+                               class="link-input" 
+                               id="${type}-link-${mesNum}" 
+                               placeholder="Pegar enlace de Google Drive aquí..."
+                               value="${existingLink}"
+                               data-type="${type}"
+                               data-mes="${mesNum}">
+                        <div class="link-status" id="${type}-status-${mesNum}"></div>
+                    </div>
+                    <div class="link-actions">
+                        <button type="button" class="btn-test-link" onclick="testLink('${type}', ${mesNum})">
+                            <i class="fas fa-external-link-alt me-1"></i>Probar
+                        </button>
+                        <button type="button" class="btn-clear-link" onclick="clearLink('${type}', ${mesNum})">
+                            <i class="fas fa-eraser me-1"></i>Limpiar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+
+        function setupLinkEvents() {
+            // Configurar selector de año
+            const yearSelector = document.getElementById('yearSelector');
+            if (yearSelector) {
+                yearSelector.addEventListener('change', function() {
+                    currentYear = parseInt(this.value);
+                    // Actualizar títulos de las pestañas
+                    document.getElementById('saludYear').textContent = currentYear;
+                    document.getElementById('labYear').textContent = currentYear;
+                    // Actualizar el título principal de la sección
+                    document.getElementById('sectionYear').textContent = currentYear;
+                    // Actualizar otros elementos que muestran el año en la página
+                    updateYearElements(currentYear);
+                    // Actualizar el año global en el servidor
+                    updateGlobalYear(currentYear);
+                    // Recargar los enlaces del año seleccionado y actualizar los formularios
+                    fetch(`/admin/get_links/${currentYear}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                linksData = data.links;
+                            } else {
+                                linksData = {salud: {}, laboratorio: {}};
+                            }
+                            generateLinkForms();
+                        })
+                        .catch(error => {
+                            console.error('Error cargando enlaces:', error);
+                            linksData = {salud: {}, laboratorio: {}};
+                            generateLinkForms();
+                        });
+                });
+            }
+
+            // Configurar validación de enlaces
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('link-input')) {
+                    validateLink(e.target);
+                }
+            });
+        }
+
+        function updateGlobalYear(year) {
+            // Enviar petición al servidor para actualizar el año global
+            fetch('/admin/update_global_year', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    year: year
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Año global actualizado:', data.message);
+                    // Mostrar notificación de que el año se actualizó globalmente
+                    showFloatingAlert(`Año actualizado globalmente a ${year}. Recarga la página para ver los cambios en el dashboard.`, 'success');
+                } else {
+                    console.error('Error al actualizar año global:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la petición de actualización de año:', error);
+            });
+        }
+
+        function updateYearElements(year) {
+            // Actualizar elementos que muestran el año en diferentes partes de la página
+            const yearElements = document.querySelectorAll('.anio, .header-year, [data-year]');
+            
+            yearElements.forEach(element => {
+                if (element.classList.contains('anio') || element.classList.contains('header-year') || element.hasAttribute('data-year')) {
+                    element.textContent = year;
+                }
+            });
+            
+            // Actualizar enlaces que contienen el año en la URL
+            const yearLinks = document.querySelectorAll(`a[href*="${currentYear}"]`);
+            yearLinks.forEach(link => {
+                link.href = link.href.replace(new RegExp(currentYear, 'g'), year);
+            });
+            
+            // Actualizar textos que contienen el año actual
+            const textElements = document.querySelectorAll('*');
+            textElements.forEach(element => {
+                if (element.childNodes.length === 1 && element.childNodes[0].nodeType === 3) {
+                    // Solo elementos que contienen solo texto
+                    const text = element.textContent;
+                    if (text.includes(currentYear.toString())) {
+                        element.textContent = text.replace(new RegExp(currentYear, 'g'), year);
+                    }
+                }
+            });
+        }
+
+        function validateLink(input) {
+            const url = input.value.trim();
+            const statusElement = document.getElementById(`${input.dataset.type}-status-${input.dataset.mes}`);
+            
+            if (!url) {
+                input.classList.remove('valid', 'invalid');
+                statusElement.innerHTML = '';
+                return;
+            }
+
+            // Validar formato de URL de Google Drive
+            const googleDrivePattern = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9-_]+/;
+            
+            if (googleDrivePattern.test(url)) {
+                input.classList.remove('invalid');
+                input.classList.add('valid');
+                statusElement.innerHTML = '<i class="fas fa-check-circle valid"></i>';
+            } else {
+                input.classList.remove('valid');
+                input.classList.add('invalid');
+                statusElement.innerHTML = '<i class="fas fa-times-circle invalid"></i>';
+            }
+        }
+
+        function testLink(type, mes) {
+            const input = document.getElementById(`${type}-link-${mes}`);
+            const url = input.value.trim();
+            
+            if (!url) {
+                showFloatingAlert('No hay enlace para probar', 'warning');
+                return;
+            }
+
+            // Abrir enlace en nueva pestaña
+            window.open(url, '_blank');
+        }
+
+        function clearLink(type, mes) {
+            const input = document.getElementById(`${type}-link-${mes}`);
+            const statusElement = document.getElementById(`${type}-status-${mes}`);
+            
+            input.value = '';
+            input.classList.remove('valid', 'invalid');
+            statusElement.innerHTML = '';
+            
+            showFloatingAlert('Enlace limpiado', 'info');
+        }
+
+        function saveAllLinks() {
+            console.log('Función saveAllLinks iniciada');
+            
+            const saveBtn = document.querySelector('.save-all-btn');
+            if (!saveBtn) {
+                console.error('No se encontró el botón de guardar');
+                showFloatingAlert('Error: No se encontró el botón de guardar', 'danger');
+                return;
+            }
+            
+            const originalText = saveBtn.innerHTML;
+            console.log('Texto original del botón:', originalText);
+            
+            // Mostrar indicador de progreso
+            saveBtn.innerHTML = `
+                <div class="progress-indicator">
+                    <div class="progress-spinner"></div>
+                    Guardando...
+                </div>
+            `;
+            saveBtn.disabled = true;
+
+            // Recopilar todos los enlaces
+            const links = {
+                salud: {},
+                laboratorio: {}
+            };
+
+            // Recopilar enlaces de Salud Casanare
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`salud-link-${i}`);
+                if (input && input.value.trim()) {
+                    links.salud[i] = input.value.trim();
+                    console.log(`Enlace salud ${i}:`, input.value.trim());
+                }
+            }
+
+            // Recopilar enlaces de Laboratorio
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`laboratorio-link-${i}`);
+                if (input && input.value.trim()) {
+                    links.laboratorio[i] = input.value.trim();
+                    console.log(`Enlace laboratorio ${i}:`, input.value.trim());
+                }
+            }
+
+            console.log('Enlaces recopilados:', links);
+            console.log('Año actual:', currentYear);
+
+            // Enviar al backend
+            fetch('/admin/save_links', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    year: currentYear,
+                    links: links
+                })
+            })
+            .then(response => {
+                console.log('Respuesta del servidor:', response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Datos de respuesta:', data);
+                if (data.success) {
+                    showFloatingAlert('Enlaces guardados exitosamente', 'success');
+                    linksData = links;
+                } else {
+                    showFloatingAlert(data.error || 'Error al guardar enlaces', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la petición:', error);
+                showFloatingAlert('Error al guardar enlaces: ' + error.message, 'danger');
+            })
+            .finally(() => {
+                // Restaurar botón
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+                console.log('Botón restaurado');
+            });
+        }
+
+        // Funcionalidad para control de disponibilidad 2025
+        let section2025Enabled = true; // Por defecto activada
+        let unavailableMessage = 'Sección temporalmente no disponible. Posible actualización de plataforma en curso. Por favor, contacte al administrador para más información.';
+
+        // Inicializar controles de 2025
+        document.addEventListener('DOMContentLoaded', function() {
+            initialize2025Controls();
+        });
+
+        function initialize2025Controls() {
+            const toggle = document.getElementById('toggle2025');
+            const messageInput = document.getElementById('unavailableMessage');
+            
+            if (toggle) {
+                // Cargar estado actual desde la sesión
+                load2025Status();
+                
+                toggle.addEventListener('change', function() {
+                    updateToggleUI();
+                    updateMessagePreview();
+                });
+            }
+            
+            if (messageInput) {
+                messageInput.addEventListener('input', function() {
+                    unavailableMessage = this.value;
+                    updateMessagePreview();
+                });
+            }
+        }
+
+        function load2025Status() {
+            // Cargar estado desde la sesión (se implementará en el backend)
+            fetch('/admin/get_2025_status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        section2025Enabled = data.enabled;
+                        unavailableMessage = data.message || unavailableMessage;
+                        
+                        // Actualizar UI
+                        const toggle = document.getElementById('toggle2025');
+                        const messageInput = document.getElementById('unavailableMessage');
+                        
+                        if (toggle) {
+                            toggle.checked = section2025Enabled;
+                        }
+                        
+                        if (messageInput) {
+                            messageInput.value = unavailableMessage;
+                        }
+                        
+                        updateToggleUI();
+                        updateMessagePreview();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estado de 2025:', error);
+                });
+        }
+
+        function updateToggleUI() {
+            const toggle = document.getElementById('toggle2025');
+            const toggleStatus = document.getElementById('toggleStatus');
+            const currentStatus = document.getElementById('currentStatus');
+            
+            if (toggle && toggleStatus && currentStatus) {
+                section2025Enabled = toggle.checked;
+                
+                if (section2025Enabled) {
+                    toggleStatus.textContent = 'Desactivar';
+                    toggleStatus.className = 'text-success';
+                    currentStatus.textContent = 'disponible';
+                    currentStatus.className = 'text-success';
+                } else {
+                    toggleStatus.textContent = 'Activar';
+                    toggleStatus.className = 'text-danger';
+                    currentStatus.textContent = 'no disponible';
+                    currentStatus.className = 'text-danger';
+                }
+            }
+        }
+
+        function updateMessagePreview() {
+            const preview = document.getElementById('messagePreview');
+            if (preview) {
+                preview.innerHTML = `
+                    <i class="fas fa-tools me-2"></i>
+                    <strong>${unavailableMessage.split('.')[0]}.</strong><br>
+                    ${unavailableMessage.split('.').slice(1).join('.').trim()}
+                `;
+            }
+        }
+
+        function update2025Status() {
+            const toggle = document.getElementById('toggle2025');
+            const messageInput = document.getElementById('unavailableMessage');
+            
+            if (!toggle || !messageInput) {
+                showFloatingAlert('Error: No se encontraron los controles necesarios', 'danger');
+                return;
+            }
+            
+            const enabled = toggle.checked;
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                showFloatingAlert('Por favor, ingrese un mensaje de no disponibilidad', 'warning');
+                return;
+            }
+            
+            // Mostrar indicador de progreso
+            const saveBtn = event.target;
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            saveBtn.disabled = true;
+            
+            // Enviar al backend
+            fetch('/admin/update_2025_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    enabled: enabled,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    section2025Enabled = enabled;
+                    unavailableMessage = message;
+                    
+                    const statusText = enabled ? 'activada' : 'desactivada';
+                    showFloatingAlert(`Sección 2025 ${statusText} exitosamente`, 'success');
+                    
+                    // Actualizar UI
+                    updateToggleUI();
+                    updateMessagePreview();
+                } else {
+                    showFloatingAlert(data.error || 'Error al actualizar estado', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar estado de 2025:', error);
+                showFloatingAlert('Error al actualizar estado: ' + error.message, 'danger');
+            })
+            .finally(() => {
+                // Restaurar botón
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('importantMsgForm');
+            const status = document.getElementById('importantMsgStatus');
+            const textarea = document.getElementById('importantMsgContent');
+            const checkbox = document.getElementById('importantMsgActive');
+            const preview = document.getElementById('importantMsgPreview');
+            const previewText = document.getElementById('importantMsgPreviewText');
+
+            function updatePreview() {
+                const content = textarea.value.trim();
+                if (checkbox.checked && content) {
+                    preview.style.display = '';
+                    previewText.textContent = content;
+                } else {
+                    preview.style.display = 'none';
+                }
+            }
+            textarea.addEventListener('input', updatePreview);
+            checkbox.addEventListener('change', updatePreview);
+            updatePreview();
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                status.textContent = '';
+                const content = textarea.value;
+                const is_active = checkbox.checked;
+                fetch('/admin/important_message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: content, is_active: is_active })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        status.textContent = '¡Mensaje guardado!';
+                        status.className = 'text-success ms-3';
+                    } else {
+                        status.textContent = 'Error al guardar.';
+                        status.className = 'text-danger ms-3';
+                    }
+                })
+                .catch(() => {
+                    status.textContent = 'Error de red.';
+                    status.className = 'text-danger ms-3';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
+</html> 

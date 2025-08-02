@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuario - Control de Aseo</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestana.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .header-container {
+            background: linear-gradient(135deg, #0f2167 0%, #1a3891 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        .header-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.2) 0%,
+                rgba(255,255,255,0.4) 50%,
+                rgba(255,255,255,0.2) 100%
+            );
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(15, 33, 103, 0.95) 0%, rgba(26, 56, 145, 0.95) 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .header-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin: 0;
+        }
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+            margin-top: 1rem;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .modern-separator {
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.7) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            margin: 1rem auto 0.5rem;
+            position: relative;
+        }
+        .modern-separator::before,
+        .modern-separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            transform: translateY(-50%);
+        }
+        .modern-separator::before {
+            left: calc(50% - 50px);
+        }
+        .modern-separator::after {
+            right: calc(50% - 50px);
+        }
+        .content-section {
+            padding: 0 2rem;
+            margin-bottom: 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .footer-separator {
+            position: relative;
+            height: 4px;
+            width: 100%;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-separator::before {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #3b82f6 20%,
+                #60a5fa 30%,
+                #ffffff 50%,
+                #60a5fa 70%,
+                #3b82f6 80%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        .footer-separator::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle,
+                rgba(59, 130, 246, 0.8) 0%,
+                rgba(59, 130, 246, 0.4) 50%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        .footer-separator-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+        .footer-separator-dot.left {
+            left: 25%;
+        }
+        .footer-separator-dot.right {
+            right: 25%;
+        }
+        .footer-separator-line {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1px;
+            width: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 75%,
+                transparent 100%
+            );
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .footer-section:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-title i {
+            font-size: 1.3rem;
+            color: #2563eb;
+        }
+        .footer-text {
+            color: #334155;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+            font-size: 0.95rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .footer-contact:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(5px);
+        }
+        .footer-contact i {
+            color: #2563eb;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+        .footer-contact:hover i {
+            transform: scale(1.1);
+            color: #1e3a8a;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-credits {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+        .credits-section {
+            flex: 1;
+            max-width: 400px;
+        }
+        .footer-company {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .footer-developer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .developer-company {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+        .developer-name {
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+        }
+        .developer-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: rotateBorder 4s linear infinite;
+        }
+        .developer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .developer-logo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
+            z-index: -1;
+            animation: spin 3s linear infinite;
+        }
+        .developer-logo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 3s linear infinite;
+        }
+        .developer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .user-float-panel {
+            position: fixed;
+            bottom: 30px;
+            right: 12px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.98) 100%
+            );
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.05),
+                0 4px 15px rgba(37, 99, 235, 0.08);
+            z-index: 1000;
+            width: 180px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .user-float-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.08),
+                0 6px 20px rgba(37, 99, 235, 0.1);
+        }
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+        }
+        .user-name {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+        .time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 2px;
+        }
+        .time-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #334155;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .time-item:hover {
+            background: rgba(241, 245, 249, 0.8);
+            transform: translateX(2px);
+        }
+        .time-item i {
+            width: 14px;
+            color: #3b82f6;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        .time-item span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .time-separator {
+            width: 100%;
+            height: 1px;
+            background: rgba(203, 213, 225, 0.3);
+            margin: 2px 0;
+        }
+        @media (max-width: 768px) {
+            .user-float-panel {
+                bottom: 15px;
+                right: 15px;
+                width: 160px;
+            }
+            .time-item {
+                padding: 2px 4px;
+            }
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        .btn {
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            border: none;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #4b5563, #374151);
+            transform: translateY(-2px);
+        }
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-weight: 500;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .alert-danger {
+            background: linear-gradient(45deg, #fef2f2, #fee2e2);
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+        .alert-success {
+            background: linear-gradient(45deg, #f0fdf4, #dcfce7);
+            color: #16a34a;
+            border-left: 4px solid #16a34a;
+        }
+        .alert-info {
+            background: linear-gradient(45deg, #eff6ff, #dbeafe);
+            color: #2563eb;
+            border-left: 4px solid #2563eb;
+        }
+        .alert i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .btn-close {
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .btn-close:hover {
+            opacity: 1;
+        }
+        .credits-divider {
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(255, 255, 255, 0.7) 20%,
+                rgba(59, 130, 246, 0.8) 50%,
+                rgba(255, 255, 255, 0.7) 80%,
+                transparent
+            );
+            position: relative;
+            margin: 0 1rem;
+        }
+        .credits-divider::before,
+        .credits-divider::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #60a5fa;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+        }
+        .credits-divider::before {
+            top: 10px;
+        }
+        .credits-divider::after {
+            bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+        @keyframes rotateBorder {
+            0% { border-color: rgba(255, 255, 255, 0.2);}
+            50% { border-color: rgba(96, 165, 250, 0.5);}
+            100% { border-color: rgba(255, 255, 255, 0.2);}
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-content">
+            <div class="header-title-wrapper">
+                <h1 class="header-title">Crear Usuario</h1>
+            </div>
+            <div class="modern-separator"></div>
+            <h2 class="company-name">Grupo Servis Aseo S.L</h2>
+            <a href="{{ url_for('admin_users') }}" class="back-button" style="position:absolute;bottom:1.5rem;right:3.5rem;background:#dc2626;color:#fff;padding:0.35rem 0.7rem;border-radius:6px;text-decoration:none;font-weight:400;display:flex;align-items:center;gap:0.35rem;border:none;box-shadow:0 2px 8px rgba(220,38,38,0.25);transition:all 0.3s ease;z-index:1000;font-size:0.85rem;">
+                <i class="fas fa-arrow-left"></i>
+                Volver a Usuarios
+            </a>
+        </div>
+    </div>
+
+    <section class="content-section">
+        <!-- Sistema de mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Crear Nuevo Usuario
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="fas fa-user me-2"></i>
+                                    Nombre de Usuario
+                                </label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>
+                                    Contraseña
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="role" class="form-label">
+                                    <i class="fas fa-user-tag me-2"></i>
+                                    Rol
+                                </label>
+                                <select class="form-control" id="role" name="role">
+                                    <option value="user">Usuario</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    Crear Usuario
+                                </button>
+                                <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>
+                                    Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-separator">
+            <div class="footer-separator-line"></div>
+            <div class="footer-separator-dot left"></div>
+            <div class="footer-separator-dot right"></div>
+        </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-building"></i>
+                    Sobre Nosotros
+                </h3>
+                <p class="footer-text">Grupo Servis Aseo S.L, líderes en servicios profesionales de limpieza y mantenimiento. Comprometidos con la excelencia y la calidad en cada servicio.</p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-address-card"></i>
+                    Contacto
+                </h3>
+                <div class="footer-contact">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 305 201 2373</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>componentescpu@gmail.com</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Casanare, Colombia</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-star"></i>
+                    Servicios Especializados
+                </h3>
+                <p class="footer-text">• Limpieza Hospitalaria Avanzada</p>
+                <p class="footer-text">• Mantenimiento de Laboratorios</p>
+                <p class="footer-text">• Control de Calidad Profesional</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                <div class="credits-section">
+                    <p class="footer-company">© 2025 Grupo Servis Aseo S.L - Innovación en Servicios de Limpieza</p>
+                </div>
+                <div class="credits-divider"></div>
+                <div class="credits-section">
+                    <div class="footer-developer">
+                        <div class="developer-header">
+                            <div class="developer-logo">
+                                <img src="{{ url_for('static', filename='images/jl-digital-logo.jpg') }}" alt="JL Digital Logo">
+                            </div>
+                            <p class="developer-company">Sistema desarrollado por JLDIGITAL S.A</p>
+                        </div>
+                        <p class="developer-name">Ing. Julio César Martínez - Desarrollador Profesional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="user-float-panel">
+        <div class="user-info-header">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <p class="user-name">{{ current_user.username }}</p>
+        </div>
+        <div class="time-info">
+            <div class="time-item">
+                <i class="fas fa-clock"></i>
+                <span id="current-time">--:--:--</span>
+            </div>
+            <div class="time-separator"></div>
+            <div class="time-item">
+                <i class="fas fa-calendar"></i>
+                <span id="current-date">--/--/----</span>
+            </div>
+            <div class="time-item">
+                <i class="fas fa-calendar-day"></i>
+                <span id="current-month-year">---- ----</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            // Actualizar hora
+            const timeString = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+            // Actualizar fecha
+            const dateString = now.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateString;
+            // Actualizar mes y año
+            const monthYearString = now.toLocaleDateString('es-ES', {
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('current-month-year').textContent = 
+                monthYearString.charAt(0).toUpperCase() + monthYearString.slice(1);
+        }
+        // Actualizar inmediatamente y luego cada segundo
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html> 

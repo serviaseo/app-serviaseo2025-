@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sistema de Control de Aseo - Login</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestana.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background:
+                linear-gradient(45deg, #0f172a, #1e293b),
+                url('data:image/svg+xml;utf8,<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.45"><rect x="10" y="10" width="25" height="6" rx="3" fill="%23fff" transform="rotate(-20 22 13)"/><!-- Cepillo --><rect x="70" y="20" width="18" height="6" rx="3" fill="%23fff" transform="rotate(15 79 23)"/><!-- Escoba --><ellipse cx="35" cy="80" rx="7" ry="4" fill="%23fff"/><!-- Balde --><circle cx="90" cy="90" r="8" fill="%23fff"/><!-- Cabeza persona --><rect x="84" y="100" width="12" height="4" rx="2" fill="%23fff"/><!-- Cuerpo persona --><rect x="100" y="40" width="18" height="5" rx="2.5" fill="%23fff" transform="rotate(-45 109 42.5)"/><!-- Cepillo extra --><ellipse cx="110" cy="110" rx="6" ry="3" fill="%23fff"/><!-- Balde extra --><circle cx="20" cy="110" r="6" fill="%23fff"/><!-- Cabeza personal extra --><rect x="14" y="115" width="12" height="3" rx="1.5" fill="%23fff"/><!-- Cuerpo personal extra --></g></svg>');
+            background-size: cover, 140px 140px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            border-radius: 50%;
+            animation: float 10s infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(30px, 30px) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header img {
+            max-width: 110px;
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            margin-bottom: 1rem;
+            background: #fff;
+            border: 2px solid #3b82f6;
+        }
+
+        .login-header h2 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            color: white;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            color: white;
+        }
+
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px 0 0 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-login {
+            background: linear-gradient(45deg, #3b82f6, #9333ea);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem;
+            color: white;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .btn-login:hover:before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.5);
+        }
+
+        .alert {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        ::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.3s;
+            overflow: visible;
+        }
+        .whatsapp-float:hover {
+            background: #1ebe57;
+            transform: scale(1.08);
+            color: #fff;
+            text-decoration: none;
+        }
+        .whatsapp-float::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 60px;
+            height: 60px;
+            background: #25d366;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.5;
+            animation: whatsapp-pulse 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+        @keyframes whatsapp-pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.6);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+        .input-group {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #495057;
+            cursor: pointer;
+            z-index: 3;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password:hover {
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="emoji-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;pointer-events:none;">
+        <span style="position:absolute;left:8vw;top:10vh;font-size:5rem;opacity:0.13;">🧹</span>
+        <span style="position:absolute;left:70vw;top:12vh;font-size:6rem;opacity:0.13;">🪣</span>
+        <span style="position:absolute;left:20vw;top:70vh;font-size:7rem;opacity:0.13;">🧑‍🔧</span>
+        <span style="position:absolute;left:80vw;top:60vh;font-size:5rem;opacity:0.13;">🧽</span>
+        <span style="position:absolute;left:50vw;top:80vh;font-size:6rem;opacity:0.13;">🧼</span>
+    </div>
+
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <div class="login-container">
+        <div class="login-header">
+            <img src="{{ url_for('static', filename='LOGO Grupo Servis Aseo S.L/Logo Moda Femenina Minimalista Negro y Rosa.png') }}" alt="Grupo Servis Aseo S.L" style="max-width: 110px; width: 110px; height: 110px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.12); margin-bottom: 1rem; background: #fff; border: 2px solid #3b82f6;">
+            <h2>Control de Aseo</h2>
+            <p>Inicie sesión para continuar</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="login-form">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" name="username" placeholder="Usuario" required autofocus value="{{ request.form.username or '' }}">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                    <i class="fas fa-eye" id="password-toggle-icon"></i>
+                </button>
+            </div>
+            <button type="submit" class="btn btn-login">
+                <i class="fas fa-sign-in-alt"></i> Entrar
+            </button>
+        </form>
+        <div style="text-align:center; margin-top: 1.5rem; color: #bfc9d1; font-size: 1rem; letter-spacing: 0.5px;">
+            ¿Necesitas ayuda? <br>
+            <a href="mailto:serviaseocolombia2025@gmail.com" style="color:#3b82f6; text-decoration:underline; font-weight:500;">serviaseocolombia2025@gmail.com</a>
+        </div>
+    </div>
+
+    <a href="https://wa.me/573174847594" class="whatsapp-float" target="_blank" title="Contáctanos por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.1 3.2 5.077 4.363.709.306 1.262.489 1.694.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.617h-.001a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.455 4.436-9.89 9.893-9.89 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.896 6.994c-.003 5.455-4.438 9.89-9.897 9.89m8.413-18.304A11.815 11.815 0 0 0 12.05 0C5.495 0 .06 5.435.058 12.086c0 2.13.557 4.213 1.615 6.044L0 24l6.064-1.594a11.888 11.888 0 0 0 5.982 1.523h.005c6.554 0 11.89-5.435 11.893-12.086a11.82 11.82 0 0 0-3.487-8.486"/>
+        </svg>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('password-toggle-icon');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html> 

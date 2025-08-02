@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registro de Personas - Uniremington Yopal</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestana.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="https://www.uniremington.edu.co/" target="_blank" rel="noopener noreferrer">
+                <img src="{{ url_for('static', filename='imagenes/logo-universdad.png') }}" alt="Logo" class="logo-img">
+                <span class="brand-text">REGISTROS DE INSTRUCTIVO</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('index') }}"><i class="bi bi-house-door"></i>Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://sites.google.com/view/instructivo-flask/inicio" target="_blank" rel="noopener noreferrer"><i class="bi bi-info-circle"></i>Instructivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://flask.palletsprojects.com/en/stable/" target="_blank" rel="noopener noreferrer"><i class="bi bi-code-slash"></i>Flask</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_login') }}"><i class="bi bi-shield-lock"></i>Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card form-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-center mb-4 gap-4 flex-wrap">
+                            <i class="bi bi-person-circle user-icon display-1 text-primary"></i>
+                            <div>
+                                <h1 class="mb-1 fw-bold" style="font-size:2.2rem;">Registro de Personas</h1>
+                                <h3 class="text-muted" style="font-size:1.3rem;">Uniremington Yopal</h3>
+                            </div>
+                        </div>
+                        
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="programa" class="form-label">Programa</label>
+                                <select class="form-select" id="programa" name="programa" required>
+                                    <option value="">Seleccione un programa</option>
+                                    <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                                    <option value="Administración de Empresas">Administración de Empresas</option>
+                                    <option value="Contaduría">Contaduría</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Registrar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-4 list-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="mb-0">Registros</h2>
+                            <span class="badge bg-primary rounded-pill">Total: {{ personas|length }}</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="bi bi-person-fill"></i> Nombre</th>
+                                        <th><i class="bi bi-envelope-fill"></i> Email</th>
+                                        <th><i class="bi bi-book-fill"></i> Programa</th>
+                                        <th><i class="bi bi-calendar-fill"></i> Fecha de Registro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for persona in personas %}
+                                    <tr>
+                                        <td>{{ persona.nombre }}</td>
+                                        <td>{{ persona.email }}</td>
+                                        <td><span class="badge bg-info">{{ persona.programa }}</span></td>
+                                        <td>{{ persona.fecha_registro.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if not personas %}
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-inbox-fill fs-1"></i>
+                            <p class="mt-2">No hay registros aún</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página moderno -->
+    <footer class="footer-modern mt-5">
+        <div class="footer-bar-red"></div>
+        <div class="footer-top d-flex flex-column flex-md-row align-items-center justify-content-between px-4 py-3">
+            <div class="d-flex align-items-center gap-3 mb-3 mb-md-0">
+                <a class="logo-container" href="https://www.uniremington.edu.co/" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename='imagenes/logo-universdad.png') }}" alt="Logo" class="logo-img">
+                </a>
+                <span class="footer-title-anim ms-2">LENGUAJE DE PROGRAMACIÓN 3</span>
+            </div>
+            <div class="footer-contact d-flex flex-column flex-md-row align-items-center gap-3">
+                <a href="mailto:componentescpu@gmail.com" class="footer-link"><i class="bi bi-envelope-at"></i> componentescpu@gmail.com</a>
+                <a href="tel:+573174847594" class="footer-link"><i class="bi bi-telephone"></i> +57 317 484 7594</a>
+            </div>
+        </div>
+        <div class="footer-bottom text-center py-2">
+            Página desarrollada por los estudiantes <b>JULIO CESAR MARTINEZ LOPEZ</b> y <b>ADRIAN YESID ORTIZ CARVAJAL</b> de la Facultad de Ingeniería de Sistemas, 5° semestre. Página educativa.
+        </div>
+        <div class="footer-bar-blue"></div>
+    </footer>
+
+    <!-- Botón flotante de WhatsApp moderno -->
+    <a href="https://wa.me/573174847594" class="whatsapp-float" target="_blank" rel="noopener" title="Chatea por WhatsApp">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 

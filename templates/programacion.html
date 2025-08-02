@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programación de Servicios - Control de Aseo</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestaña.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .header-container {
+            background: linear-gradient(135deg, #0f2167 0%, #1a3891 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        .header-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.2) 0%,
+                rgba(255,255,255,0.4) 50%,
+                rgba(255,255,255,0.2) 100%
+            );
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(15, 33, 103, 0.95) 0%, rgba(26, 56, 145, 0.95) 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .header-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin: 0;
+        }
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+            margin-top: 1rem;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .modern-separator {
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.7) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            margin: 1rem auto 0.5rem;
+            position: relative;
+        }
+        .modern-separator::before,
+        .modern-separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            transform: translateY(-50%);
+        }
+        .modern-separator::before {
+            left: calc(50% - 50px);
+        }
+        .modern-separator::after {
+            right: calc(50% - 50px);
+        }
+        .header-subtitle {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+        }
+        .content-section {
+            padding: 0 2rem;
+            margin-bottom: 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .footer-separator {
+            position: relative;
+            height: 4px;
+            width: 100%;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-separator::before {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #3b82f6 20%,
+                #60a5fa 30%,
+                #ffffff 50%,
+                #60a5fa 70%,
+                #3b82f6 80%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        .footer-separator::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle,
+                rgba(59, 130, 246, 0.8) 0%,
+                rgba(59, 130, 246, 0.4) 50%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        .footer-separator-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+        .footer-separator-dot.left {
+            left: 25%;
+        }
+        .footer-separator-dot.right {
+            right: 25%;
+        }
+        .footer-separator-line {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1px;
+            width: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 75%,
+                transparent 100%
+            );
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .footer-section:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer-title i {
+            font-size: 1.3rem;
+            color: #2563eb;
+        }
+        .footer-text {
+            color: #334155;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+            font-size: 0.95rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .footer-contact:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(5px);
+        }
+        .footer-contact i {
+            color: #2563eb;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+        .footer-contact:hover i {
+            transform: scale(1.1);
+            color: #1e3a8a;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-credits {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+        .credits-section {
+            flex: 1;
+            max-width: 400px;
+        }
+        .footer-company {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .footer-developer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .developer-company {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+        .developer-name {
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+        }
+        .developer-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: rotateBorder 4s linear infinite;
+        }
+        .developer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .developer-logo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
+            z-index: -1;
+            animation: spin 3s linear infinite;
+        }
+        .developer-logo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 3s linear infinite;
+        }
+        .developer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .user-float-panel {
+            position: fixed;
+            bottom: 30px;
+            right: 12px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.98) 100%
+            );
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.05),
+                0 4px 15px rgba(37, 99, 235, 0.08);
+            z-index: 1000;
+            width: 180px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .user-float-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.08),
+                0 6px 20px rgba(37, 99, 235, 0.1);
+        }
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+        }
+        .user-name {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+        .time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 2px;
+        }
+        .time-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #334155;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .time-item:hover {
+            background: rgba(241, 245, 249, 0.8);
+            transform: translateX(2px);
+        }
+        .time-item i {
+            width: 14px;
+            color: #3b82f6;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        .time-item span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .time-separator {
+            width: 100%;
+            height: 1px;
+            background: rgba(203, 213, 225, 0.3);
+            margin: 2px 0;
+        }
+        @media (max-width: 768px) {
+            .user-float-panel {
+                bottom: 15px;
+                right: 15px;
+                width: 160px;
+            }
+            .time-item {
+                padding: 2px 4px;
+            }
+        }
+        .info-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(59,130,246,0.10);
+            padding: 2rem 2.5rem;
+            max-width: 400px;
+            margin: 0 auto;
+            color: #334155;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .info-card .info-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .info-card .info-text {
+            font-size: 1rem;
+            color: #334155;
+            margin: 0;
+        }
+        .credits-divider {
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(255, 255, 255, 0.7) 20%,
+                rgba(59, 130, 246, 0.8) 50%,
+                rgba(255, 255, 255, 0.7) 80%,
+                transparent
+            );
+            position: relative;
+            margin: 0 1rem;
+        }
+        .credits-divider::before,
+        .credits-divider::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #60a5fa;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+        }
+        .credits-divider::before {
+            top: 10px;
+        }
+        .credits-divider::after {
+            bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+        @keyframes rotateBorder {
+            0% { border-color: rgba(255, 255, 255, 0.2);}
+            50% { border-color: rgba(96, 165, 250, 0.5);}
+            100% { border-color: rgba(255, 255, 255, 0.2);}
+        }
+        
+        /* Estilos del Calendario */
+        .calendar-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .calendar-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .calendar-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .month-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-width: 150px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #f3f4f6;
+        }
+        
+        .weekday-header {
+            background: #f8fafc;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .weekday-header.sunday {
+            color: #dc2626;
+            font-weight: 700;
+        }
+        
+        .calendar-day {
+            background: white;
+            min-height: 80px;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #f3f4f6;
+        }
+        
+        .calendar-day:hover {
+            background: #f8fafc;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+        
+        .calendar-day.empty {
+            background: #f9fafb;
+            cursor: default;
+        }
+        
+        .calendar-day.empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .day-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .calendar-day.sunday .day-number {
+            color: #dc2626;
+            font-weight: 700;
+        }
+        
+        .calendar-day.saturday {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+        }
+        
+        .calendar-day.saturday .day-number {
+            color: #92400e;
+            font-weight: 700;
+        }
+        
+        .calendar-day.today {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 3px solid #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .calendar-day.today .day-number {
+            color: #1e40af;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+        
+        .calendar-day.today::before {
+            content: 'HOY';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #3b82f6;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 4px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+        
+        .calendar-day.today.sunday {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            border: 3px solid #dc2626;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+        
+        .calendar-day.today.sunday .day-number {
+            color: #991b1b;
+        }
+        
+        .calendar-day.today.saturday {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 3px solid #f59e0b;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .calendar-day.today.saturday .day-number {
+            color: #92400e;
+        }
+        
+        .calendar-day.tuesday, .calendar-day.thursday {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 2px solid #16a34a;
+        }
+        
+        .calendar-day.tuesday .day-number, .calendar-day.thursday .day-number {
+            color: #15803d;
+            font-weight: 700;
+        }
+        
+        .waste-collection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+        
+        .waste-collection i {
+            color: #16a34a;
+            font-size: 0.8rem;
+            animation: truckMove 3s infinite ease-in-out;
+        }
+        
+        .waste-text {
+            font-size: 0.6rem;
+            color: #15803d;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.1;
+        }
+        
+        @keyframes truckMove {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(2px);
+            }
+            75% {
+                transform: translateX(-2px);
+            }
+        }
+        
+        .calendar-day.today.tuesday, .calendar-day.today.thursday {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 3px solid #16a34a;
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+        }
+        
+        .calendar-day.today.tuesday .day-number, .calendar-day.today.thursday .day-number {
+            color: #15803d;
+        }
+        
+        .calendar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .legend-color.sunday {
+            background: #fecaca;
+            border-color: #dc2626;
+        }
+        
+        .legend-color.saturday {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #f59e0b;
+        }
+        
+        .legend-color.tuesday {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-color: #16a34a;
+        }
+        
+        .legend-color.today {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-color: #3b82f6;
+        }
+        
+        .legend-color.normal {
+            background: white;
+            border-color: #d1d5db;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .calendar-container {
+                margin: 0 1rem;
+                border-radius: 15px;
+            }
+            
+            .calendar-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .calendar-title {
+                font-size: 1.4rem;
+            }
+            
+            .month-display {
+                font-size: 1rem;
+                min-width: 120px;
+            }
+            
+            .calendar-day {
+                min-height: 60px;
+                padding: 0.25rem;
+            }
+            
+            .day-number {
+                font-size: 1rem;
+            }
+            
+            .waste-text {
+                font-size: 0.6rem;
+            }
+            
+            .calendar-legend {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+        }
+        
+        .disinfection-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+        
+        .disinfection-arrow i {
+            color: #dc2626;
+            font-size: 0.8rem;
+            animation: bounce 2s infinite;
+        }
+        
+        .disinfection-text {
+            font-size: 0.65rem;
+            color: #92400e;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-3px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        /* Estilos de la Sección de Capacitación */
+        .training-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            margin-top: 3rem;
+        }
+        
+        .training-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .training-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .training-title i {
+            color: #3b82f6;
+            font-size: 2.2rem;
+        }
+        
+        .training-subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+        }
+        
+        .training-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .training-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #1e40af);
+        }
+        
+        .training-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .training-card:hover .card-icon {
+            transform: scale(1.1);
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Colores específicos para cada tema */
+        .training-card:nth-child(1) .card-icon {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+        
+        .training-card:nth-child(1):hover .card-icon {
+            box-shadow: 0 12px 25px rgba(220, 38, 38, 0.4);
+        }
+        
+        .training-card:nth-child(2) .card-icon {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+        }
+        
+        .training-card:nth-child(2):hover .card-icon {
+            box-shadow: 0 12px 25px rgba(5, 150, 105, 0.4);
+        }
+        
+        .training-card:nth-child(3) .card-icon {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+        
+        .training-card:nth-child(3):hover .card-icon {
+            box-shadow: 0 12px 25px rgba(124, 58, 237, 0.4);
+        }
+        
+        .training-card:nth-child(4) .card-icon {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .training-card:nth-child(4):hover .card-icon {
+            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.4);
+        }
+        
+        .training-card:nth-child(5) .card-icon {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            box-shadow: 0 8px 20px rgba(8, 145, 178, 0.3);
+        }
+        
+        .training-card:nth-child(5):hover .card-icon {
+            box-shadow: 0 12px 25px rgba(8, 145, 178, 0.4);
+        }
+        
+        .training-card:nth-child(6) .card-icon {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+        }
+        
+        .training-card:nth-child(6):hover .card-icon {
+            box-shadow: 0 12px 25px rgba(22, 163, 74, 0.4);
+        }
+        
+        /* Líneas de color en las tarjetas */
+        .training-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #dc2626, #991b1b);
+        }
+        
+        .training-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #059669, #047857);
+        }
+        
+        .training-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #7c3aed, #5b21b6);
+        }
+        
+        .training-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        
+        .training-card:nth-child(5)::before {
+            background: linear-gradient(90deg, #0891b2, #0e7490);
+        }
+        
+        .training-card:nth-child(6)::before {
+            background: linear-gradient(90deg, #16a34a, #15803d);
+        }
+        
+        .card-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .card-content li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .card-content li:last-child {
+            border-bottom: none;
+        }
+        
+        .card-content strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        .additional-info {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .info-title i {
+            color: #3b82f6;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .info-item {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .info-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-item h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .info-item h4 i {
+            color: #3b82f6;
+        }
+        
+        .info-item p {
+            color: #64748b;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        /* Responsive para capacitación */
+        @media (max-width: 768px) {
+            .training-section {
+                padding: 2rem 1rem;
+            }
+            
+            .training-title {
+                font-size: 2rem;
+            }
+            
+            .training-title i {
+                font-size: 1.8rem;
+            }
+            
+            .training-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .training-card {
+                padding: 1.5rem;
+            }
+            
+            .card-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .card-icon i {
+                font-size: 1.5rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .info-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-content">
+            <div class="header-title-wrapper">
+                <h1 class="header-title">Programación de Servicios</h1>
+            </div>
+            <div class="modern-separator"></div>
+            <h2 class="company-name">Grupo Servis Aseo S.L</h2>
+            <a href="{{ url_for('dashboard') }}#registro2025" class="back-button" style="position:absolute;bottom:1.5rem;right:3.5rem;background:#dc2626;color:#fff;padding:0.35rem 0.7rem;border-radius:6px;text-decoration:none;font-weight:400;display:flex;align-items:center;gap:0.35rem;border:none;box-shadow:0 2px 8px rgba(220,38,38,0.25);transition:all 0.3s ease;z-index:1000;font-size:0.85rem;">
+                <i class="fas fa-arrow-left"></i>
+                Salir a Inicio
+            </a>
+        </div>
+    </div>
+    <section class="content-section">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h2 class="calendar-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Calendario de Servicios - {{ current_month_name }} {{ current_year }}
+                </h2>
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="previousMonth()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="month-display">{{ current_month_name }} {{ current_year }}</span>
+                    <button class="nav-btn" onclick="nextMonth()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calendar-grid">
+                <!-- Días de la semana -->
+                <div class="weekday-header">Lun</div>
+                <div class="weekday-header">Mar</div>
+                <div class="weekday-header">Mié</div>
+                <div class="weekday-header">Jue</div>
+                <div class="weekday-header">Vie</div>
+                <div class="weekday-header">Sáb</div>
+                <div class="weekday-header sunday">Dom</div>
+                
+                <!-- Días del mes -->
+                {% for day in calendar_days %}
+                    {% if day == 0 %}
+                        <div class="calendar-day empty"></div>
+                    {% else %}
+                        <div class="calendar-day {% if day.is_sunday %}sunday{% endif %} {% if day.is_saturday %}saturday{% endif %}">
+                            <span class="day-number">{{ day.day_number }}</span>
+                            {% if day.is_saturday %}
+                                <div class="disinfection-arrow">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span class="disinfection-text">Desinfección IPS</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <div class="legend-color sunday"></div>
+                    <span>Domingos - Descanso</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color saturday"></div>
+                    <span>Sábados - Desinfección IPS</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color tuesday"></div>
+                    <span>Martes/Jueves - Recolección Residuos</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color today"></div>
+                    <span>Hoy</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color normal"></div>
+                    <span>Días Laborales</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección de Capacitación -->
+    <section class="training-section">
+        <div class="training-header">
+            <h2 class="training-title">
+                <i class="fas fa-graduation-cap"></i>
+                Capacitación en Normas de Bioseguridad
+            </h2>
+            <p class="training-subtitle">Protocolos y procedimientos para servicios de aseo en instituciones de salud</p>
+        </div>
+        
+        <div class="training-grid">
+            <!-- Bioseguridad -->
+            <div class="training-card">
+                <div class="card-icon">
+                    <i class="fas fa-shield-virus"></i>
+                </div>
+                <h3 class="card-title">Normas de Bioseguridad</h3>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>EPP Obligatorio:</strong> Guantes, mascarilla, gafas, overol</li>
+                        <li><strong>Lavado de manos:</strong> Antes y después de cada procedimiento</li>
+                        <li><strong>Desinfección:</strong> Superficies con hipoclorito al 0.5%</li>
+                        <li><strong>Manejo de residuos:</strong> Separación por tipo y color</li>
+                        <li><strong>Ventilación:</strong> Mantener áreas bien ventiladas</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Áreas Hospitalarias -->
+            <div class="training-card">
+                <div class="card-icon">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <h3 class="card-title">Manejo de Áreas Hospitalarias</h3>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>Áreas Críticas:</strong> UCI, quirófanos, laboratorios</li>
+                        <li><strong>Áreas Semi-críticas:</strong> Habitaciones, pasillos</li>
+                        <li><strong>Áreas No-críticas:</strong> Oficinas, recepción</li>
+                        <li><strong>Frecuencia:</strong> 3-4 veces por día en áreas críticas</li>
+                        <li><strong>Secuencia:</strong> De menos a más contaminada</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Químicos de Limpieza -->
+            <div class="training-card">
+                <div class="card-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3 class="card-title">Uso de Químicos de Limpieza</h3>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>Detergentes:</strong> Para limpieza general</li>
+                        <li><strong>Desinfectantes:</strong> Hipoclorito, alcohol 70%</li>
+                        <li><strong>Diluciones:</strong> Seguir protocolos exactos</li>
+                        <li><strong>Almacenamiento:</strong> En lugar fresco y seco</li>
+                        <li><strong>Rotulación:</strong> Etiquetas claras y fechas</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Señales de Seguridad -->
+            <div class="training-card">
+                <div class="card-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="card-title">Señales de Seguridad</h3>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>Piso Mojado:</strong> Señal amarilla con texto negro</li>
+                        <li><strong>Área Restringida:</strong> Señal roja con texto blanco</li>
+                        <li><strong>Equipos de Protección:</strong> Señal azul obligatoria</li>
+                        <li><strong>Material Peligroso:</strong> Señal naranja de advertencia</li>
+                        <li><strong>Salida de Emergencia:</strong> Señal verde con flecha</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Limpieza de Canecas -->
+            <div class="training-card">
+                <div class="card-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3 class="card-title">Limpieza de Canecas</h3>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>Frecuencia:</strong> Diaria en áreas críticas</li>
+                        <li><strong>Procedimiento:</strong> Vaciar, lavar, desinfectar</li>
+                        <li><strong>Secado:</strong> Al aire libre o con paño limpio</li>
+                        <li><strong>Reposición:</strong> Bolsas nuevas según color</li>
+                        <li><strong>Verificación:</strong> Estado antes de usar</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Procedimientos Específicos -->
+            <div class="training-card">
+                <div class="card-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3 class="card-title">Procedimientos Específicos</h3>
+                <div class="card-content">
+                    <ul>
+                        <li><strong>Derrames:</strong> Contener, limpiar, desinfectar</li>
+                        <li><strong>Equipos:</strong> Desconectar antes de limpiar</li>
+                        <li><strong>Superficies:</strong> De arriba hacia abajo</li>
+                        <li><strong>Textiles:</strong> Lavado a 60°C mínimo</li>
+                        <li><strong>Documentación:</strong> Registrar cada procedimiento</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información Adicional -->
+        <div class="additional-info">
+            <div class="info-section">
+                <h3 class="info-title">
+                    <i class="fas fa-info-circle"></i>
+                    Información Importante
+                </h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <h4><i class="fas fa-clock"></i> Horarios de Limpieza</h4>
+                        <p>Áreas críticas: 6:00 AM - 10:00 PM<br>
+                        Áreas generales: 7:00 AM - 8:00 PM</p>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fas fa-phone"></i> Contacto Emergencias</h4>
+                        <p>Supervisor: +57 305 201 2373<br>
+                        Emergencias: 123</p>
+                    </div>
+                    <div class="info-item">
+                        <h4><i class="fas fa-file-alt"></i> Documentación</h4>
+                        <p>Registrar en planillas diarias<br>
+                        Mantener evidencia fotográfica</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contactos de Emergencia - Aguazul, Casanare -->
+<div class="additional-info" style="margin-top: 2.5rem;">
+  <div class="info-section">
+    <h3 class="info-title">
+      <i class="fas fa-phone-volume" style="color:#2563eb;"></i>
+      Contactos de Emergencia - Aguazul, Casanare
+    </h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <h4><i class="fas fa-fire-extinguisher" style="color:#dc2626;"></i> Bomberos Aguazul</h4>
+        <p>
+          <strong>Teléfono:</strong> <a href="tel:+573132591005">+57 313 2591005</a><br>
+          <strong>Dirección:</strong> Cra. 18 #744<br>
+          <strong>Atención:</strong> 24 horas
+        </p>
+      </div>
+      <div class="info-item">
+        <h4><i class="fas fa-shield-alt" style="color:#2563eb;"></i> Estación de Policía Aguazul</h4>
+        <p>
+          <strong>Teléfono:</strong> <a href="tel:3208979393">320 897 9393</a><br>
+          <strong>Dirección:</strong> Calle 14 N°34-180, Vía Siribana<br>
+          <strong>Correo:</strong> <a href="mailto:decasdaguazul@policia.gov.co">decasdaguazul@policia.gov.co</a>
+        </p>
+      </div>
+      <div class="info-item">
+        <h4><i class="fas fa-hospital" style="color:#16a34a;"></i> Hospital Juan Hernando Urrego</h4>
+        <p>
+          <strong>Teléfono:</strong> <a href="tel:0986392400">(098) 639 2400</a><br>
+          <strong>Dirección:</strong> Calle 11 Nº 15-40
+        </p>
+      </div>
+      <div class="info-item">
+        <h4><i class="fas fa-university" style="color:#eab308;"></i> Alcaldía Municipal de Aguazul</h4>
+        <p>
+          <strong>Conmutador:</strong> <a href="tel:6086345995">(608) 634 5995</a><br>
+          <strong>Línea gratuita:</strong> <a href="tel:018000953231">01 8000 95 32 31</a><br>
+          <strong>Correo:</strong> <a href="mailto:contactenos@aguazul-casanare.gov.co">contactenos@aguazul-casanare.gov.co</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fin Contactos de Emergencia -->
+    <footer class="footer">
+        <div class="footer-separator">
+            <div class="footer-separator-line"></div>
+            <div class="footer-separator-dot left"></div>
+            <div class="footer-separator-dot right"></div>
+        </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-building"></i>
+                    Sobre Nosotros
+                </h3>
+                <p class="footer-text">Grupo Servis Aseo S.L, líderes en servicios profesionales de limpieza y mantenimiento. Comprometidos con la excelencia y la calidad en cada servicio.</p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-address-card"></i>
+                    Contacto
+                </h3>
+                <div class="footer-contact">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 305 201 2373</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>componentescpu@gmail.com</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Casanare, Colombia</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-star"></i>
+                    Servicios Especializados
+                </h3>
+                <p class="footer-text">• Limpieza Hospitalaria Avanzada</p>
+                <p class="footer-text">• Mantenimiento de Laboratorios</p>
+                <p class="footer-text">• Control de Calidad Profesional</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                <div class="credits-section">
+                    <p class="footer-company">© 2025 Grupo Servis Aseo S.L - Innovación en Servicios de Limpieza</p>
+                </div>
+                <div class="credits-divider"></div>
+                <div class="credits-section">
+                    <div class="footer-developer">
+                        <div class="developer-header">
+                            <div class="developer-logo">
+                                <img src="{{ url_for('static', filename='images/jl-digital-logo.jpg') }}" alt="JL Digital Logo" loading="lazy">
+                            </div>
+                            <p class="developer-company">Sistema desarrollado por JLDIGITAL S.A</p>
+                        </div>
+                        <p class="developer-name">Ing. Julio César Martínez - Desarrollador Profesional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="user-float-panel">
+        <div class="user-info-header">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <p class="user-name">{{ current_user.username }}</p>
+        </div>
+        <div class="time-info">
+            <div class="time-item">
+                <i class="fas fa-clock"></i>
+                <span id="current-time">--:--:--</span>
+            </div>
+            <div class="time-separator"></div>
+            <div class="time-item">
+                <i class="fas fa-calendar"></i>
+                <span id="current-date">--/--/----</span>
+            </div>
+            <div class="time-item">
+                <i class="fas fa-calendar-day"></i>
+                <span id="current-month-year">---- ----</span>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        
+        function updateDateTime() {
+            const now = new Date();
+            // Actualizar hora
+            const timeString = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+            // Actualizar fecha
+            const dateString = now.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateString;
+            // Actualizar mes y año
+            const monthYearString = now.toLocaleDateString('es-ES', {
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('current-month-year').textContent = 
+                monthYearString.charAt(0).toUpperCase() + monthYearString.slice(1);
+        }
+        
+        function generateCalendar(month, year) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDate = new Date(firstDay);
+            
+            // Obtener fecha actual
+            const today = new Date();
+            const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+            const todayDate = today.getDate();
+            
+            // Ajustar para que la semana empiece en lunes (0 = lunes, 6 = domingo)
+            const dayOfWeek = firstDay.getDay();
+            const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            startDate.setDate(startDate.getDate() - mondayOffset);
+            
+            const calendarDays = [];
+            const currentDate = new Date(startDate);
+            
+            // Generar 42 días (6 semanas x 7 días)
+            for (let i = 0; i < 42; i++) {
+                if (currentDate.getMonth() === month && currentDate.getFullYear() === year) {
+                    const dayOfWeek = currentDate.getDay();
+                    const isSunday = dayOfWeek === 0;
+                    const isSaturday = dayOfWeek === 6;
+                    const isTuesday = dayOfWeek === 2;
+                    const isThursday = dayOfWeek === 4;
+                    const isToday = isCurrentMonth && currentDate.getDate() === todayDate;
+                    
+                    calendarDays.push({
+                        day_number: currentDate.getDate(),
+                        is_sunday: isSunday,
+                        is_saturday: isSaturday,
+                        is_tuesday: isTuesday,
+                        is_thursday: isThursday,
+                        is_today: isToday
+                    });
+                } else {
+                    calendarDays.push(0); // Día vacío
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            return calendarDays;
+        }
+        
+        function updateCalendar() {
+            const monthNames = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            ];
+            
+            const calendarDays = generateCalendar(currentMonth, currentYear);
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const monthDisplay = document.querySelector('.month-display');
+            const calendarTitle = document.querySelector('.calendar-title');
+            
+            // Actualizar título y navegación
+            monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            calendarTitle.innerHTML = `<i class="fas fa-calendar-alt"></i> Calendario de Servicios - ${monthNames[currentMonth]} ${currentYear}`;
+            
+            // Limpiar días existentes (mantener headers)
+            const weekdayHeaders = Array.from(calendarGrid.querySelectorAll('.weekday-header'));
+            calendarGrid.innerHTML = '';
+            weekdayHeaders.forEach(header => calendarGrid.appendChild(header));
+            
+            // Agregar días del calendario
+            calendarDays.forEach(day => {
+                if (day === 0) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day empty';
+                    calendarGrid.appendChild(emptyDay);
+                } else {
+                    const dayElement = document.createElement('div');
+                    let dayClasses = 'calendar-day';
+                    if (day.is_sunday) dayClasses += ' sunday';
+                    if (day.is_saturday) dayClasses += ' saturday';
+                    if (day.is_tuesday) dayClasses += ' tuesday';
+                    if (day.is_thursday) dayClasses += ' thursday';
+                    if (day.is_today) dayClasses += ' today';
+                    
+                    dayElement.className = dayClasses;
+                    
+                    let additionalContent = '';
+                    if (day.is_saturday) {
+                        additionalContent = `
+                            <div class="disinfection-arrow">
+                                <i class="fas fa-arrow-up"></i>
+                                <span class="disinfection-text">Desinfección IPS</span>
+                            </div>
+                        `;
+                    } else if (day.is_tuesday || day.is_thursday) {
+                        additionalContent = `
+                            <div class="waste-collection">
+                                <i class="fas fa-truck"></i>
+                                <span class="waste-text">Recolección Residuos Peligrosos</span>
+                            </div>
+                        `;
+                    }
+                    
+                    dayElement.innerHTML = `
+                        <span class="day-number">${day.day_number}</span>
+                        ${additionalContent}
+                    `;
+                    
+                    calendarGrid.appendChild(dayElement);
+                }
+            });
+        }
+        
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendar();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendar();
+        }
+        
+        // Inicializar calendario
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCalendar();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        });
+    </script>
+</body>
+</html> 

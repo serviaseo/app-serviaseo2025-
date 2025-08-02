@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros Recientes - Uniremington Yopal</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestaña.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="https://www.uniremington.edu.co/" target="_blank" rel="noopener noreferrer">
+                <img src="{{ url_for('static', filename='imagenes/logo-universdad.png') }}" alt="Logo" class="logo-img" loading="lazy">
+                <span class="brand-text">REGISTROS DE INSTRUCTIVO</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-house-door"></i>Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('registros') }}"><i class="bi bi-person-plus"></i>Registros Recientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://sites.google.com/view/instructivo-flask/inicio" target="_blank" rel="noopener noreferrer"><i class="bi bi-info-circle"></i>Instructivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://flask.palletsprojects.com/en/stable/" target="_blank" rel="noopener noreferrer"><i class="bi bi-code-slash"></i>Flask</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card list-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h1 class="mb-0">Registros Recientes</h1>
+                            <div>
+                                <span class="badge bg-primary rounded-pill me-2">Total: {{ personas|length }}</span>
+                                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-left"></i> Volver al Inicio
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="bi bi-person-fill"></i> Nombre</th>
+                                        <th><i class="bi bi-envelope-fill"></i> Email</th>
+                                        <th><i class="bi bi-book-fill"></i> Programa</th>
+                                        <th><i class="bi bi-calendar-fill"></i> Fecha de Registro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for persona in personas %}
+                                    <tr class="fade-in">
+                                        <td>{{ persona.nombre }}</td>
+                                        <td>{{ persona.email }}</td>
+                                        <td>
+                                            <span class="badge bg-info">{{ persona.programa }}</span>
+                                        </td>
+                                        <td>{{ persona.fecha_registro.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if not personas %}
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-inbox-fill fs-1"></i>
+                            <p class="mt-2">No hay registros aún</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 

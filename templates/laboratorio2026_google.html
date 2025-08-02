@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Laboratorio MARTHA GLADYS NIÑO</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ICON/logopestana.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            padding-bottom: 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #0f2167, #1a3891);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1rem;
+        }
+
+        .iframe-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            pointer-events: auto;
+        }
+
+        .iframe-container.scroll-disabled {
+            pointer-events: none;
+        }
+
+        .iframe-container.scroll-disabled iframe {
+            pointer-events: none;
+        }
+
+        /* Estilos del Footer */
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-separator {
+            position: relative;
+            height: 4px;
+            width: 100%;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-separator::before {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #3b82f6 20%,
+                #60a5fa 30%,
+                #ffffff 50%,
+                #60a5fa 70%,
+                #3b82f6 80%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+
+        .footer-separator::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle,
+                rgba(59, 130, 246, 0.8) 0%,
+                rgba(59, 130, 246, 0.4) 50%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .footer-separator-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+
+        .footer-separator-dot.left {
+            left: 25%;
+        }
+
+        .footer-separator-dot.right {
+            right: 25%;
+        }
+
+        .footer-separator-line {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1px;
+            width: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 75%,
+                transparent 100%
+            );
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-section:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-title i {
+            font-size: 1.3rem;
+            color: #2563eb;
+        }
+
+        .footer-text {
+            color: #334155;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+            font-size: 0.95rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-contact:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(5px);
+        }
+
+        .footer-contact i {
+            color: #2563eb;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-contact:hover i {
+            transform: scale(1.1);
+            color: #1e3a8a;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-credits {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .credits-divider {
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(255, 255, 255, 0.7) 20%,
+                rgba(59, 130, 246, 0.8) 50%,
+                rgba(255, 255, 255, 0.7) 80%,
+                transparent
+            );
+            position: relative;
+            margin: 0 1rem;
+        }
+
+        .credits-divider::before,
+        .credits-divider::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #60a5fa;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+        }
+
+        .credits-divider::before {
+            top: 10px;
+        }
+
+        .credits-divider::after {
+            bottom: 10px;
+        }
+
+        .credits-section {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .footer-company {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .footer-developer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .developer-company {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+
+        .developer-name {
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+        }
+
+        .developer-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: rotateBorder 4s linear infinite;
+        }
+
+        .developer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .developer-logo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
+            z-index: -1;
+            animation: spin 3s linear infinite;
+        }
+
+        .developer-logo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        .developer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes borderRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                border-color: rgba(96, 165, 250, 0.5);
+            }
+            100% {
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 0 1rem;
+            }
+
+            .footer-credits {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .credits-divider {
+                width: 150px;
+                height: 2px;
+                margin: 0.5rem 0;
+            }
+
+            .credits-divider::before,
+            .credits-divider::after {
+                width: 4px;
+                height: 4px;
+                top: 50%;
+            }
+
+            .credits-divider::before {
+                left: 20px;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .credits-divider::after {
+                left: auto;
+                right: 20px;
+                top: 50%;
+                transform: translate(50%, -50%);
+            }
+
+            .credits-section {
+                width: 100%;
+                max-width: none;
+            }
+
+            .footer-company,
+            .footer-developer {
+                padding: 0.4rem;
+            }
+        }
+
+        /* Estilos para el panel flotante de usuario */
+        .user-float-panel {
+            position: fixed;
+            bottom: 30px;
+            right: 12px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 255, 255, 0.98) 100%
+            );
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.05),
+                0 4px 15px rgba(37, 99, 235, 0.08);
+            z-index: 1000;
+            width: 180px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .user-float-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.08),
+                0 6px 20px rgba(37, 99, 235, 0.1);
+        }
+
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+        }
+
+        .user-name {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        .time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 2px;
+        }
+
+        .time-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #334155;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .time-item:hover {
+            background: rgba(241, 245, 249, 0.8);
+            transform: translateX(2px);
+        }
+
+        .time-item i {
+            width: 14px;
+            color: #3b82f6;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
+        .time-item span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .time-separator {
+            width: 100%;
+            height: 1px;
+            background: rgba(203, 213, 225, 0.3);
+            margin: 2px 0;
+        }
+
+        @media (max-width: 768px) {
+            .user-float-panel {
+                bottom: 15px;
+                right: 15px;
+                width: 160px;
+            }
+
+            .time-item {
+                padding: 2px 4px;
+            }
+        }
+
+        /* Estilos para la barra de navegación moderna */
+        .header-container {
+            background: linear-gradient(135deg, #0f2167 0%, #1a3891 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.6;
+        }
+
+        .header-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.2) 0%,
+                rgba(255,255,255,0.4) 50%,
+                rgba(255,255,255,0.2) 100%
+            );
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(15, 33, 103, 0.95) 0%, rgba(26, 56, 145, 0.95) 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin: 0;
+        }
+
+        .header-year {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            margin-left: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+            margin-top: 1rem;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .modern-separator {
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.7) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            margin: 1rem auto 0.5rem;
+            position: relative;
+        }
+
+        .modern-separator::before,
+        .modern-separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: white;
+            transform: translateY(-50%);
+        }
+
+        .modern-separator::before {
+            left: calc(50% - 50px);
+        }
+
+        .modern-separator::after {
+            right: calc(50% - 50px);
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+        }
+
+        .back-button {
+            position: absolute;
+            bottom: 1rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+        .back-button i {
+            font-size: 0.8rem;
+        }
+
+        .back-button-round {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #007bff;
+            color: #ffffff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.25);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button-round:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .back-button-round i {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button-round:hover i {
+            transform: translateX(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .header-title-wrapper {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .header-title {
+                font-size: 1.8rem;
+            }
+
+            .header-year {
+                font-size: 1.4rem;
+                margin-left: 0;
+            }
+
+            .company-name {
+                font-size: 1.1rem;
+            }
+
+            .modern-separator {
+                width: 150px;
+            }
+
+            .header-subtitle {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+
+            .back-button {
+                bottom: 1rem;
+                right: 1.2rem;
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .back-button i {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Estilos para los botones de descarga */
+        .download-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .download-title {
+            text-align: center;
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .download-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 2px;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 60px;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .download-btn i {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .download-btn:hover i {
+            transform: scale(1.1);
+        }
+
+        .download-btn.excel {
+            background: linear-gradient(135deg, #217346 0%, #1e6b3d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 115, 70, 0.3);
+        }
+
+        .download-btn.excel:hover {
+            box-shadow: 0 8px 25px rgba(33, 115, 70, 0.4);
+        }
+
+        .download-btn.pdf {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .download-btn.pdf:hover {
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .download-btn.word {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .download-btn.word:hover {
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .download-btn .btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .download-btn .btn-main-text {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .download-btn .btn-sub-text {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .download-section {
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+            }
+
+            .download-title {
+                font-size: 1.3rem;
+            }
+
+            .download-buttons {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .download-btn {
+                padding: 0.8rem 1.2rem;
+                min-height: 50px;
+            }
+
+            .download-btn i {
+                font-size: 1.3rem;
+            }
+
+            .download-btn .btn-main-text {
+                font-size: 0.9rem;
+            }
+
+            .download-btn .btn-sub-text {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Estilos para el botón flotante de la calculadora */
+        .calculator-float-btn {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-float-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+        }
+
+        .calculator-float-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .calculator-float-btn.hide {
+            display: none !important;
+        }
+
+        /* Panel flotante solo para contener la calculadora centrada */
+        .calculator-panel {
+            position: fixed;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: auto;
+            height: auto;
+            background: none;
+            box-shadow: none;
+            transition: opacity 0.3s cubic-bezier(.4,2,.6,1);
+            z-index: 1500;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            pointer-events: none;
+        }
+        .calculator-panel.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .calculator-panel:not(.open) {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .calculator-body {
+            width: 220px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+            border: 3px solid #e0e3ea;
+            padding: 18px 0 18px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: auto;
+        }
+        .calculator-header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .calculator-close-x {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #b0b0b0;
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 2px 10px 2px 10px;
+            margin-right: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .calculator-close-x:hover {
+            background: #e0e3ea;
+            color: #e74c3c;
+        }
+        .calculator-display {
+            background: none;
+            color: #222;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            font-size: 22px;
+            text-align: right;
+            width: 100%;
+            margin-bottom: 16px;
+            font-family: 'Courier New', monospace;
+            box-shadow: none;
+        }
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 38px);
+            grid-template-rows: repeat(5, 38px);
+            gap: 6px;
+        }
+        .calc-btn {
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+            background: #fff;
+            color: #222;
+            padding: 0;
+        }
+        .calc-btn:active {
+            box-shadow: 0 1px 2px rgba(44, 62, 80, 0.10);
+        }
+        .calc-btn.clear {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .calc-btn.clear:active {
+            background: #c0392b;
+        }
+        .calc-btn.operator {
+            background: #3498db;
+            color: #fff;
+        }
+        .calc-btn.operator:active {
+            background: #217dbb;
+        }
+        .calc-btn.equals {
+            background: #2ecc40;
+            color: #fff;
+            grid-column: 1 / span 4;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .calc-btn.equals:active {
+            background: #27ae60;
+        }
+        .calc-btn.zero {
+            grid-column: 1 / span 2;
+        }
+        .calc-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        @media (max-width: 768px) {
+            .calculator-panel {
+                left: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            .calculator-body {
+                width: 95vw;
+                min-width: 0;
+                max-width: 220px;
+                padding: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-content">
+            <div class="header-title-wrapper">
+                <h1 class="header-title">Laboratorio MARTHA GLADYS NIÑO</h1>
+                <span class="header-year">{{ year_2026 }}</span>
+            </div>
+            <div class="modern-separator"></div>
+            <h2 class="company-name">Grupo Servis Aseo S.L</h2>
+            <p class="header-subtitle">Control de servicios de limpieza y mantenimiento especializado</p>
+            <a href="{{ url_for('dashboard') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Volver a la Página Principal
+            </a>
+        </div>
+    </div>
+
+    <!-- Botón flotante de la calculadora -->
+    <button class="calculator-float-btn" onclick="openCalculator()" title="Calculadora">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M7 7H17V9H7V7Z" fill="currentColor"/>
+            <path d="M7 11H9V13H7V11Z" fill="currentColor"/>
+            <path d="M11 11H13V13H11V11Z" fill="currentColor"/>
+            <path d="M15 11H17V13H15V11Z" fill="currentColor"/>
+            <path d="M7 15H9V17H7V15Z" fill="currentColor"/>
+            <path d="M11 15H13V17H11V15Z" fill="currentColor"/>
+            <path d="M15 15H17V17H15V15Z" fill="currentColor"/>
+            <path d="M7 19H9V21H7V19Z" fill="currentColor"/>
+            <path d="M11 19H13V21H11V19Z" fill="currentColor"/>
+            <path d="M15 19H17V21H15V19Z" fill="currentColor"/>
+        </svg>
+    </button>
+
+    <!-- Panel lateral de la calculadora -->
+    <div id="calculatorPanel" class="calculator-panel">
+        <div class="calculator-body">
+            <div class="calculator-header">
+                <button class="calculator-close-x" onclick="closeCalculator()" title="Cerrar calculadora">&#10005;</button>
+            </div>
+            <input type="text" id="calculatorDisplay" class="calculator-display" readonly>
+            <div class="calculator-buttons">
+                <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+                <button class="calc-btn operator" onclick="backspaceDisplay()" title="Borrar" style="font-size:20px;">⌫</button>
+
+                <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+                <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+                <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
+
+                <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+                <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+                <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+
+                <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+                <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+                <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+                <button class="calc-btn" disabled></button>
+
+                <button class="calc-btn zero" onclick="appendToDisplay('0')">0</button>
+                <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+                <button class="calc-btn equals" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    {% if planilla %}
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ planilla.titulo }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if planilla.descripcion %}
+                            <p class="text-muted mb-3">{{ planilla.descripcion }}</p>
+                            {% endif %}
+                            <div class="iframe-container">
+                                <iframe src="{{ planilla.url_google_drive }}" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de descarga -->
+                    <div class="download-section">
+                        <h3 class="download-title">Descargar Planilla</h3>
+                        <div class="download-buttons">
+                            <a href="{{ url_for('descargar_planilla_2026', mes=mes_actual, formato='excel') }}" class="download-btn excel">
+                                <i class="fas fa-file-excel"></i>
+                                <div class="btn-text">
+                                    <span class="btn-main-text">Descargar Excel</span>
+                                    <span class="btn-sub-text">Formato .xlsx</span>
+                                </div>
+                            </a>
+                            <a href="{{ url_for('descargar_planilla_2026', mes=mes_actual, formato='pdf') }}" class="download-btn pdf">
+                                <i class="fas fa-file-pdf"></i>
+                                <div class="btn-text">
+                                    <span class="btn-main-text">Descargar PDF</span>
+                                    <span class="btn-sub-text">Formato .pdf</span>
+                                </div>
+                            </a>
+                            <a href="{{ url_for('descargar_planilla_2026', mes=mes_actual, formato='word') }}" class="download-btn word">
+                                <i class="fas fa-file-word"></i>
+                                <div class="btn-text">
+                                    <span class="btn-main-text">Descargar Word</span>
+                                    <span class="btn-sub-text">Formato .docx</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No hay planilla disponible para {{ nombres_meses[mes_actual] }} {{ year_2026 }}.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-separator">
+            <div class="footer-separator-line"></div>
+            <div class="footer-separator-dot left"></div>
+            <div class="footer-separator-dot right"></div>
+        </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-building"></i>
+                    Sobre Nosotros
+                </h3>
+                <p class="footer-text">Grupo Servis Aseo S.L, líderes en servicios profesionales de limpieza y mantenimiento. Comprometidos con la excelencia y la calidad en cada servicio.</p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-address-card"></i>
+                    Contacto
+                </h3>
+                <div class="footer-contact">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 305 201 2373</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>componentescpu@gmail.com</span>
+                </div>
+                <div class="footer-contact">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Casanare, Colombia</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-star"></i>
+                    Servicios Especializados
+                </h3>
+                <p class="footer-text">• Limpieza Hospitalaria Avanzada</p>
+                <p class="footer-text">• Mantenimiento de Laboratorios</p>
+                <p class="footer-text">• Control de Calidad Profesional</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-credits">
+                <div class="credits-section">
+                    <p class="footer-company">© 2025 Grupo Servis Aseo S.L - Innovación en Servicios de Limpieza</p>
+                </div>
+                <div class="credits-divider"></div>
+                <div class="credits-section">
+                    <div class="footer-developer">
+                        <div class="developer-header">
+                            <div class="developer-logo">
+                                <img src="{{ url_for('static', filename='images/jl-digital-logo.jpg') }}" alt="JL Digital Logo">
+                            </div>
+                            <p class="developer-company">Sistema desarrollado por JLDIGITAL S.A</p>
+                        </div>
+                        <p class="developer-name">Ing. Julio César Martínez - Desarrollador Profesional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Panel flotante de usuario -->
+    <div class="user-float-panel">
+        <div class="user-info-header">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <p class="user-name">{{ current_user.username }}</p>
+        </div>
+        <div class="time-info">
+            <div class="time-item">
+                <i class="fas fa-clock"></i>
+                <span id="current-time">--:--:--</span>
+            </div>
+            <div class="time-separator"></div>
+            <div class="time-item">
+                <i class="fas fa-calendar"></i>
+                <span id="current-date">--/--/----</span>
+            </div>
+            <div class="time-item">
+                <i class="fas fa-calendar-day"></i>
+                <span id="current-month-year">---- ----</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="{{ url_for('dashboard') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h2 class="text-center text-primary">{{ planilla.titulo }}</h2>
+            <a href="{{ url_for('ver_mes_2026', mes=mes_actual) }}" class="back-button-round">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Actualizar hora
+            const timeString = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+            
+            // Actualizar fecha
+            const dateString = now.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateString;
+            
+            // Actualizar mes y año
+            const monthYearString = now.toLocaleDateString('es-ES', {
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('current-month-year').textContent = 
+                monthYearString.charAt(0).toUpperCase() + monthYearString.slice(1);
+        }
+
+        // Actualizar inmediatamente y luego cada segundo
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Control de scroll wheel para la planilla
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframeContainer = document.querySelector('.iframe-container');
+            const iframe = iframeContainer ? iframeContainer.querySelector('iframe') : null;
+            
+            if (!iframeContainer || !iframe) return;
+
+            let isOverIframe = false;
+
+            // Detectar cuando el mouse entra en el iframe
+            iframeContainer.addEventListener('mouseenter', function() {
+                isOverIframe = true;
+                // Bloquear el scroll de la página
+                document.body.style.overflow = 'hidden';
+                console.log('Mouse entró en la planilla - Scroll bloqueado para la página');
+            });
+
+            // Detectar cuando el mouse sale del iframe
+            iframeContainer.addEventListener('mouseleave', function() {
+                isOverIframe = false;
+                // Restaurar el scroll de la página
+                document.body.style.overflow = 'auto';
+                console.log('Mouse salió de la planilla - Scroll restaurado para la página');
+            });
+
+            // Controlar el scroll wheel de manera más agresiva
+            document.addEventListener('wheel', function(event) {
+                if (isOverIframe) {
+                    // Bloquear completamente el scroll cuando está sobre la planilla
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                    return false;
+                }
+            }, { passive: false, capture: true });
+
+            // También manejar el scroll cuando el iframe está enfocado
+            iframe.addEventListener('focus', function() {
+                isOverIframe = true;
+                document.body.style.overflow = 'hidden';
+                console.log('Iframe enfocado - Scroll bloqueado para la página');
+            });
+
+            iframe.addEventListener('blur', function() {
+                isOverIframe = false;
+                document.body.style.overflow = 'auto';
+                console.log('Iframe sin foco - Scroll restaurado para la página');
+            });
+
+            // Agregar indicador visual opcional
+            iframeContainer.addEventListener('mouseenter', function() {
+                iframeContainer.style.border = '2px solid #3b82f6';
+                iframeContainer.style.borderRadius = '8px';
+            });
+
+            iframeContainer.addEventListener('mouseleave', function() {
+                iframeContainer.style.border = 'none';
+                iframeContainer.style.borderRadius = '0';
+            });
+
+            // Limpiar el estado cuando se sale de la página
+            window.addEventListener('beforeunload', function() {
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // Función para cerrar la calculadora
+        function closeCalculator() {
+            document.getElementById('calculatorPanel').classList.remove('open');
+            document.querySelector('.calculator-float-btn').classList.remove('hide');
+        }
+
+        // Función para abrir la calculadora
+        function openCalculator() {
+            document.getElementById('calculatorPanel').classList.add('open');
+            document.querySelector('.calculator-float-btn').classList.add('hide');
+        }
+
+        // Función para limpiar la pantalla
+        function clearDisplay() {
+            document.getElementById('calculatorDisplay').value = '';
+        }
+
+        // Función para agregar contenido a la pantalla
+        function appendToDisplay(value) {
+            document.getElementById('calculatorDisplay').value += value;
+        }
+
+        // Función para calcular el resultado
+        function calculate() {
+            try {
+                const display = document.getElementById('calculatorDisplay');
+                const expression = display.value;
+                
+                // Validar la expresión
+                if (!expression) return;
+                
+                // Reemplazar × por * para la evaluación
+                const cleanExpression = expression.replace(/×/g, '*');
+                
+                // Evaluar la expresión de forma segura
+                const result = evaluateExpression(cleanExpression);
+                
+                // Mostrar el resultado
+                display.value = result;
+            } catch (error) {
+                document.getElementById('calculatorDisplay').value = 'Error';
+                setTimeout(() => {
+                    document.getElementById('calculatorDisplay').value = '';
+                }, 1000);
+            }
+        }
+
+        // Función para evaluar expresiones matemáticas de forma segura
+        function evaluateExpression(expression) {
+            // Remover caracteres no permitidos
+            const cleanExpr = expression.replace(/[^0-9+\-*/().]/g, '');
+            
+            // Validar paréntesis balanceados
+            if (!isBalanced(cleanExpr)) {
+                throw new Error('Paréntesis no balanceados');
+            }
+            
+            // Evaluar usando Function constructor (más seguro que eval)
+            const result = new Function('return ' + cleanExpr)();
+            
+            // Verificar si el resultado es un número válido
+            if (isNaN(result) || !isFinite(result)) {
+                throw new Error('Resultado inválido');
+            }
+            
+            // Redondear a 8 decimales para evitar errores de punto flotante
+            return Math.round(result * 100000000) / 100000000;
+        }
+
+        // Función para verificar paréntesis balanceados
+        function isBalanced(expression) {
+            const stack = [];
+            for (let char of expression) {
+                if (char === '(') {
+                    stack.push(char);
+                } else if (char === ')') {
+                    if (stack.length === 0) return false;
+                    stack.pop();
+                }
+            }
+            return stack.length === 0;
+        }
+
+        // Manejar teclas del teclado para la calculadora
+        document.addEventListener('keydown', function(e) {
+            const panel = document.getElementById('calculatorPanel');
+            if (panel.classList.contains('open')) {
+                const key = e.key;
+                
+                // Números y operadores
+                if (/[0-9+\-*/.()]/.test(key)) {
+                    e.preventDefault();
+                    appendToDisplay(key);
+                }
+                // Enter o = para calcular
+                else if (key === 'Enter' || key === '=') {
+                    e.preventDefault();
+                    calculate();
+                }
+                // Escape para cerrar
+                else if (key === 'Escape') {
+                    e.preventDefault();
+                    closeCalculator();
+                }
+                // Backspace para borrar
+                else if (key === 'Backspace') {
+                    e.preventDefault();
+                    const display = document.getElementById('calculatorDisplay');
+                    display.value = display.value.slice(0, -1);
+                }
+                // C para limpiar
+                else if (key === 'c' || key === 'C') {
+                    e.preventDefault();
+                    clearDisplay();
+                }
+            }
+        });
+
+        // Función para borrar el último carácter del display
+        function backspaceDisplay() {
+            const display = document.getElementById('calculatorDisplay');
+            display.value = display.value.slice(0, -1);
+        }
+    </script>
+</body>
+</html> 
